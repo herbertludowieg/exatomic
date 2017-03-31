@@ -1,0 +1,771 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>exatomic.basis &mdash; exatomic 0.3.8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="exatomic 0.3.8 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> exatomic
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">General Info</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Exatomic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/api.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributor Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/overview.html">Overview</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">exatomic</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>exatomic.basis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for exatomic.basis</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># Copyright (c) 2015-2016, Exa Analytics Development Team</span>
+<span class="c1"># Distributed under the terms of the Apache License 2.0</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Basis Set Representations</span>
+<span class="sd">##############################</span>
+<span class="sd">This module provides classes that support representations of various basis sets.</span>
+<span class="sd">There are a handful of basis sets in computational chemistry, the most common of</span>
+<span class="sd">which are Gaussian type functions, Slater type functions, and plane waves. The</span>
+<span class="sd">classes provided by this module support not only storage of basis set data, but</span>
+<span class="sd">also analytical and discrete manipulations of the basis set.</span>
+
+<span class="sd">See Also:</span>
+<span class="sd">    For symbolic and discrete manipulations see :mod:`~exatomic.algorithms.basis`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">exa</span> <span class="k">import</span> <span class="n">DataFrame</span>
+
+<span class="kn">from</span> <span class="nn">exatomic.algorithms.basis</span> <span class="k">import</span> <span class="p">(</span><span class="n">lmap</span><span class="p">,</span> <span class="n">spher_ml_count</span><span class="p">,</span> <span class="n">enum_cartesian</span><span class="p">,</span>
+                                       <span class="n">cart_lml_count</span><span class="p">,</span> <span class="n">spher_lml_count</span><span class="p">,</span>
+                                       <span class="n">_vec_normalize</span><span class="p">,</span> <span class="n">_wrap_overlap</span><span class="p">,</span> <span class="n">lorder</span><span class="p">,</span>
+                                       <span class="n">_vec_sto_normalize</span><span class="p">,</span> <span class="n">_ovl_indices</span><span class="p">,</span>
+                                       <span class="n">solid_harmonics</span><span class="p">,</span> <span class="n">car2sph_transform_matrices</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">BasisSet</span><span class="p">(</span><span class="n">DataFrame</span><span class="p">):</span>
+    <span class="n">_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;shell&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;set&#39;</span><span class="p">]</span>
+    <span class="n">_cardinal</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">_index</span> <span class="o">=</span> <span class="s1">&#39;primitive&#39;</span>
+    <span class="n">_categories</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="s1">&#39;set&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lmax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">as_ordered</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">shells</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">lorder</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">unique</span><span class="p">()]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nshells</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shells</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_sets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Group by basis set.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;set&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">functions_by_shell</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a series of (l, n function) pairs per set.&quot;&quot;&quot;</span>
+        <span class="n">mi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sets</span><span class="p">()</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;shell&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="p">[</span><span class="s1">&#39;L&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+        <span class="n">mi</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">mi</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">primitives_by_shell</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a series of (l, n primitive) pairs per set.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sets_ls</span><span class="p">()</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())))</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">primitives</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Total number of primitive functions per set.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">primitives_by_shell</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">spherical</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gaussian</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spherical</span> <span class="o">=</span> <span class="n">spherical</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gaussian</span> <span class="o">=</span> <span class="n">gaussian</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">_vec_normalize</span> <span class="k">if</span> <span class="n">gaussian</span> <span class="k">else</span> <span class="n">_vec_sto_normalize</span>
+        <span class="n">colm</span> <span class="o">=</span> <span class="s1">&#39;L&#39;</span> <span class="k">if</span> <span class="n">gaussian</span> <span class="k">else</span> <span class="s1">&#39;n&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="n">colm</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;Nd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;d&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="GaussianBasisSet"><a class="viewcode-back" href="../../api/orbital_tables.html#exatomic.container.GaussianBasisSet">[docs]</a><span class="k">class</span> <span class="nc">GaussianBasisSet</span><span class="p">(</span><span class="n">BasisSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stores information about a Gaussian type basis set.</span>
+
+<span class="sd">    A Gaussian type basis set is described by primitive Gaussian functions :math:`f\\left(x, y, z\\right)`</span>
+<span class="sd">    of the form:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        r^{2} = \\left(x - A_{x}\\right)^{2} + \\left(x - A_{y}\\right)^{2} + \\left(z - A_{z}\\right)^{2} \\\\</span>
+<span class="sd">        f\\left(x, y, z\\right) = \\left(x - A_{x}\\right)^{l}\\left(x - A_{y}\\right)^{m}\\left(z - A_{z}\\right)^{n}e^{-\\alpha r^{2}}</span>
+
+<span class="sd">    Note that :math:`l`, :math:`m`, and :math:`n` are not quantum numbers but positive integers</span>
+<span class="sd">    (including zero) whose sum defines the orbital angular momentum of the primitive function.</span>
+<span class="sd">    Each primitive function is centered on a given atom with coordinates :math:`\\left(A_{x}, A_{y}, A_{z}\\right)`.</span>
+<span class="sd">    A basis function in this basis set is a sum of one or more primitive functions:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        g_{i}\\left(x, y, z\\right) = \\sum_{j=1}^{N_{i}}c_{ij}f_{ij}\\left(x, y, z\\right)</span>
+
+<span class="sd">    Each primitive function :math:`f_{ij}` is parametrically dependent on its associated atom&#39;s</span>
+<span class="sd">    nuclear coordinates and specific values of :math:`\\alpha`, :math:`l`, :math:`m`, and :math:`n`.</span>
+<span class="sd">    For convenience in data storage, each primitive function record contains its value of</span>
+<span class="sd">    :math:`\\alpha` and coefficient (typically called the contraction coefficient) :math:`c`.</span>
+<span class="sd">    shell_function does not include degeneracy due to :math:`m_{l}` but separates exponents</span>
+<span class="sd">    and coefficients that have the same angular momentum values.</span>
+
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | Column            | Type     | Description                               |</span>
+<span class="sd">    +===================+==========+===========================================+</span>
+<span class="sd">    | alpha             | float    | value of :math:`\\alpha`                  |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | d                 | float    | value of the contraction coefficient      |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | shell             | int/cat  | shell function identifier                 |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | L                 | int/cat  | orbital angular momentum quantum number   |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | set               | int/cat  | index of unique basis set per unique atom |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | frame             | int/cat  | non-unique integer                        |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="BasisSetOrder"><a class="viewcode-back" href="../../api/orbital_tables.html#exatomic.container.BasisSetOrder">[docs]</a><span class="k">class</span> <span class="nc">BasisSetOrder</span><span class="p">(</span><span class="n">DataFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    BasisSetOrder uniquely determines the basis function ordering scheme for</span>
+<span class="sd">    a given :class:`~exatomic.universe.Universe`. This table is provided to</span>
+<span class="sd">    make transparent the characteristic ordering scheme of various quantum</span>
+<span class="sd">    codes. Either (L, ml) or (l, m, n) must be provided to have access to</span>
+<span class="sd">    orbital visualization functionality.</span>
+
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | Column            | Type     | Description                               |</span>
+<span class="sd">    +===================+==========+===========================================+</span>
+<span class="sd">    | center            | int      | atomic center                             |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | L                 | int      | orbital angular momentum                  |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | shell             | int      | group of primitives                       |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | ml                | int      | magnetic quantum number                   |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | l                 | int      | power in x                                |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | m                 | int      | power in y                                |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | n                 | int      | power in z                                |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | r                 | int      | power in r (optional - for STOs)          |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | prefac            | float    | prefactor (optional - for STOs)           |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;shell&#39;</span><span class="p">]</span>
+    <span class="n">_index</span> <span class="o">=</span> <span class="s1">&#39;chi&#39;</span>
+    <span class="n">_cardinal</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">_categories</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;L&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="Overlap"><a class="viewcode-back" href="../../api/orbital_tables.html#exatomic.container.Overlap">[docs]</a><span class="k">class</span> <span class="nc">Overlap</span><span class="p">(</span><span class="n">DataFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Overlap enumerates the overlap matrix elements between basis functions in</span>
+<span class="sd">    a contracted basis set. Currently nothing disambiguates between the</span>
+<span class="sd">    primitive overlap matrix and the contracted overlap matrix. As it is</span>
+<span class="sd">    square symmetric, only n_basis_functions * (n_basis_functions + 1) / 2</span>
+<span class="sd">    rows are stored.</span>
+
+<span class="sd">    See Gramian matrix for more on the general properties of the overlap matrix.</span>
+
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | Column            | Type     | Description                               |</span>
+<span class="sd">    +===================+==========+===========================================+</span>
+<span class="sd">    | frame             | int/cat  | non-unique integer                        |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | chi0              | int      | first basis function                      |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | chi1              | int      | second basis function                     |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    | coef              | float    | overlap matrix element                    |</span>
+<span class="sd">    +-------------------+----------+-------------------------------------------+</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;chi0&#39;</span><span class="p">,</span> <span class="s1">&#39;chi1&#39;</span><span class="p">,</span> <span class="s1">&#39;coef&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">]</span>
+    <span class="n">_index</span> <span class="o">=</span> <span class="s1">&#39;index&#39;</span>
+
+    <span class="k">def</span> <span class="nf">square</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">nbas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">roots</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]])[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">tri</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">frame</span><span class="p">]</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;chi0&#39;</span><span class="p">,</span> <span class="s1">&#39;chi1&#39;</span><span class="p">,</span> <span class="s1">&#39;coef&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tri</span> <span class="o">+</span> <span class="n">tri</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nbas</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Overlap.from_column"><a class="viewcode-back" href="../../api/orbital_tables.html#exatomic.container.Overlap.from_column">[docs]</a>    <span class="k">def</span> <span class="nf">from_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create an Overlap from a file with just the array of coefficients or</span>
+<span class="sd">        an array of the values directly.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Assuming source is a file of triangular elements of the overlap matrix</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">source</span>
+        <span class="c1"># Reverse engineer the number of basis functions given len(ovl) = n * (n + 1) / 2</span>
+        <span class="n">nbas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">roots</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ovl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="c1"># Index chi1 and chi2, they are interchangeable as overlap is symmetric</span>
+        <span class="n">chis</span> <span class="o">=</span> <span class="n">_ovl_indices</span><span class="p">(</span><span class="n">nbas</span><span class="p">,</span> <span class="n">ovl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">ovl</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s1">&#39;chi0&#39;</span><span class="p">:</span> <span class="n">chis</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+                                           <span class="s1">&#39;chi1&#39;</span><span class="p">:</span> <span class="n">chis</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+                                           <span class="s1">&#39;coef&#39;</span><span class="p">:</span> <span class="n">vals</span><span class="p">,</span>
+                                           <span class="s1">&#39;frame&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}))</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_square</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="n">ndim</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">arlen</span> <span class="o">=</span> <span class="n">ndim</span> <span class="o">*</span> <span class="p">(</span><span class="n">ndim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">arlen</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;chi1&#39;</span><span class="p">,</span> <span class="s1">&#39;i8&#39;</span><span class="p">),</span>
+                                        <span class="p">(</span><span class="s1">&#39;chi2&#39;</span><span class="p">,</span> <span class="s1">&#39;i8&#39;</span><span class="p">),</span>
+                                        <span class="p">(</span><span class="s1">&#39;coef&#39;</span><span class="p">,</span> <span class="s1">&#39;f8&#39;</span><span class="p">),</span>
+                                        <span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="s1">&#39;i8&#39;</span><span class="p">)])</span>
+        <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">ret</span><span class="p">[</span><span class="n">cnt</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span></div>
+
+<span class="c1">#class SlaterBasisSet(BasisSet):</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    Stores information about a Slater type basis set.</span>
+<span class="c1">#</span>
+<span class="c1">#    .. math::</span>
+<span class="c1">#</span>
+<span class="c1">#        r = \\left(\\left(x - A_{x}\\right)^{2} + \\left(x - A_{y}\\right)^{2} + \\left(z - A_{z}\\right)^{2}\\right)^{\\frac{1}{2}} \\\\</span>
+<span class="c1">#        f\\left(x, y, z\\right) = \\left(x - A_{x}\\right)^{i}\\left(x - A_{y}\\right)^{j}\left(z - A_{z}\\right)^{k}r^{m}e^{-\\alpha r}</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    pass</span>
+<span class="c1">#</span>
+
+<span class="c1">#class Primitive(DataFrame):</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    Notice: Primitive is just a join of basis set and atom, re-work needed.</span>
+<span class="c1">#    Contains the required information to perform molecular integrals. Some</span>
+<span class="c1">#    repetition of data with GaussianBasisSet but for convenience also stored</span>
+<span class="c1">#    here.</span>
+<span class="c1">#</span>
+<span class="c1">#    Currently has the capability to compute the primitive overlap matrix</span>
+<span class="c1">#    and reduce the dimensionality to the contracted cartesian overlap</span>
+<span class="c1">#    matrix. Does not have the functionality to convert to the contracted</span>
+<span class="c1">#    spherical overlap matrix (the fully contracted basis set of routine</span>
+<span class="c1">#    gaussian type calculations).</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | Column            | Type     | Description                               |</span>
+<span class="c1">#    +===================+==========+===========================================+</span>
+<span class="c1">#    | xa                | float    | center in x direction of primitive        |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | ya                | float    | center in y direction of primitive        |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | za                | float    | center in z direction of primitive        |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | alpha             | float    | value of :math:`\\alpha`, the exponent    |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | d                 | float    | value of the contraction coefficient      |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | l                 | int      | pre-exponential power of x                |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | m                 | int      | pre-exponential power of y                |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | n                 | int      | pre-exponential power of z                |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | L                 | int/cat  | sum of l + m + n                          |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    _columns = [&#39;xa&#39;, &#39;ya&#39;, &#39;za&#39;, &#39;alpha&#39;, &#39;d&#39;, &#39;l&#39;, &#39;m&#39;, &#39;n&#39;, &#39;L&#39;]</span>
+<span class="c1">#    _indices = [&#39;primitive&#39;]</span>
+<span class="c1">#    _categories = {&#39;l&#39;: np.int64, &#39;m&#39;: np.int64, &#39;n&#39;: np.int64, &#39;L&#39;: np.int64}</span>
+<span class="c1">#</span>
+<span class="c1">#    def _normalize(self):</span>
+<span class="c1">#        &#39;&#39;&#39;</span>
+<span class="c1">#        Often primitives come unnormalized. This fixes that.</span>
+<span class="c1">#        &#39;&#39;&#39;</span>
+<span class="c1">#        self[&#39;N&#39;] = _vec_normalize(self[&#39;alpha&#39;].values, self[&#39;L&#39;].values)</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#    def _cartesian_contraction_matrix(self, l=False):</span>
+<span class="c1">#        &#39;&#39;&#39;</span>
+<span class="c1">#        Generates the (nprim,ncont) matrix needed to reduce the</span>
+<span class="c1">#        dimensionality of the primitive basis to the contracted</span>
+<span class="c1">#        cartesian basis.</span>
+<span class="c1">#        &#39;&#39;&#39;</span>
+<span class="c1">#        bfns = self.groupby(&#39;func&#39;)</span>
+<span class="c1">#        contmat = np.zeros((len(self), len(bfns)), dtype=np.float64)</span>
+<span class="c1">#        cnt = 0</span>
+<span class="c1">#        if l:</span>
+<span class="c1">#            l = np.zeros(len(bfns), dtype=np.int64)</span>
+<span class="c1">#            for bfn, cont in bfns:</span>
+<span class="c1">#                ln = len(cont)</span>
+<span class="c1">#                contmat[cnt:cnt + ln, bfn] = cont[&#39;d&#39;].values</span>
+<span class="c1">#                l[bfn] = cont[&#39;L&#39;].values[0]</span>
+<span class="c1">#                cnt += ln</span>
+<span class="c1">#            return contmat, l</span>
+<span class="c1">#        for bfn, cont in bfns:</span>
+<span class="c1">#            ln = len(cont)</span>
+<span class="c1">#            contmat[cnt:cnt + ln, bfn] = cont[&#39;d&#39;].values</span>
+<span class="c1">#            cnt += ln</span>
+<span class="c1">#        return contmat</span>
+<span class="c1">#</span>
+<span class="c1">#    def _spherical_contraction_matrix(self):</span>
+<span class="c1">#        &#39;&#39;&#39;</span>
+<span class="c1">#        Generates the (nprim,ncont) matrix needed to reduce the</span>
+<span class="c1">#        dimensionality of the primitive basis to the contracted</span>
+<span class="c1">#        spherical basis.</span>
+<span class="c1">#        &#39;&#39;&#39;</span>
+<span class="c1">#        pass</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#    def _spherical_from_cartesian(self):</span>
+<span class="c1">#        &#39;&#39;&#39;</span>
+<span class="c1">#        Reduces the dimensionality of the contracted cartesian</span>
+<span class="c1">#        basis to the contracted spherical basis.</span>
+<span class="c1">#        &#39;&#39;&#39;</span>
+<span class="c1">#        print(&#39;warning: this is not correct&#39;)</span>
+<span class="c1">#        lmax = self[&#39;L&#39;].cat.as_ordered().max()</span>
+<span class="c1">#        prim_ovl = self.primitive_overlap().square()</span>
+<span class="c1">#        cartprim, ls = self._cartesian_contraction_matrix(l=True)</span>
+<span class="c1">#        contracted = pd.DataFrame(np.dot(np.dot(cartprim.T, prim_ovl), cartprim))</span>
+<span class="c1">#        sh = solid_harmonics(lmax)</span>
+<span class="c1">#        sphtrans = car2sph_transform_matrices(sh, lmax)</span>
+<span class="c1">#        bfns = self.groupby(&#39;func&#39;)</span>
+<span class="c1">#        lcounts = bfns.apply(lambda y: y[&#39;L&#39;].values[0]).value_counts()</span>
+<span class="c1">#        for l, lc in lcounts.items():</span>
+<span class="c1">#            lcounts[l] = lc * spher_lml_count[l] // cart_lml_count[l]</span>
+<span class="c1">#        lc = lcounts.sum()</span>
+<span class="c1">#        spherical = np.zeros((contracted.shape[0], lc), dtype=np.float64)</span>
+<span class="c1">#        ip = 0</span>
+<span class="c1">#        ic = 0</span>
+<span class="c1">#        while ip &lt; lc:</span>
+<span class="c1">#            l = ls[ic]</span>
+<span class="c1">#            if l &lt; 2:</span>
+<span class="c1">#                spherical[:,ic] = contracted[ic]</span>
+<span class="c1">#                ip += 1</span>
+<span class="c1">#                ic += 1</span>
+<span class="c1">#            else:</span>
+<span class="c1">#                cspan = ic + cart_lml_count[l]</span>
+<span class="c1">#                sspan = ip + spher_lml_count[l]</span>
+<span class="c1">#                carts = contracted[list(range(ic, cspan))]</span>
+<span class="c1">#                trans = np.dot(carts, sphtrans[l].T)</span>
+<span class="c1">#                spherical[:,ip:sspan] = trans</span>
+<span class="c1">#                ip += spher_lml_count[l]</span>
+<span class="c1">#                ic += cart_lml_count[l]</span>
+<span class="c1">#        return pd.DataFrame(np.dot(np.dot(spherical.T, contracted), spherical))</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#    def primitive_overlap(self):</span>
+<span class="c1">#        &quot;&quot;&quot;Computes the complete primitive cartesian overlap matrix.&quot;&quot;&quot;</span>
+<span class="c1">#        if &#39;N&#39; not in self.columns:</span>
+<span class="c1">#            self._normalize()</span>
+<span class="c1">#        chi1, chi2, overlap =  _wrap_overlap(self[&#39;xa&#39;].values,</span>
+<span class="c1">#                                             self[&#39;ya&#39;].values,</span>
+<span class="c1">#                                             self[&#39;za&#39;].values,</span>
+<span class="c1">#                                             self[&#39;l&#39;].astype(np.int64).values,</span>
+<span class="c1">#                                             self[&#39;m&#39;].astype(np.int64).values,</span>
+<span class="c1">#                                             self[&#39;n&#39;].astype(np.int64).values,</span>
+<span class="c1">#                                             self[&#39;N&#39;].values, self[&#39;alpha&#39;].values)</span>
+<span class="c1">#        return Overlap.from_dict({&#39;chi1&#39;: chi1, &#39;chi2&#39;: chi2,</span>
+<span class="c1">#                                  &#39;coef&#39;: overlap,</span>
+<span class="c1">#                                  &#39;frame&#39;: [0] * len(chi1)})</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#    def contracted_cartesian_overlap(self):</span>
+<span class="c1">#        &quot;&quot;&quot;Returns the contracted cartesian overlap matrix.&quot;&quot;&quot;</span>
+<span class="c1">#        prim_ovl = self.primitive_overlap().square()</span>
+<span class="c1">#        contprim = self._cartesian_contraction_matrix()</span>
+<span class="c1">#        square = pd.DataFrame(np.dot(np.dot(contprim.T, prim_ovl), contprim))</span>
+<span class="c1">#        return Overlap.from_square(square)</span>
+<span class="c1">#</span>
+<span class="c1">#    def contracted_spherical_overlap(self):</span>
+<span class="c1">#        return self._spherical_from_cartesian()</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#    @classmethod</span>
+<span class="c1">#    def from_universe(cls, universe, inplace=False):</span>
+<span class="c1">#        &#39;&#39;&#39;</span>
+<span class="c1">#        The minimum information specified by a basis set does not include</span>
+<span class="c1">#        expansion due to degeneracy from m_l. This will expand the basis in a</span>
+<span class="c1">#        systematic cartesian ordering convention to generate the full cartesian</span>
+<span class="c1">#        basis. The universe argument must already have a universe with atom,</span>
+<span class="c1">#        basis_set_summary, and gaussian_basis_set attributes.</span>
+<span class="c1">#        &#39;&#39;&#39;</span>
+<span class="c1">#        bases = universe.gaussian_basis_set[abs(universe.gaussian_basis_set[&#39;d&#39;]) &gt; 0].groupby(&#39;set&#39;)</span>
+<span class="c1">#        primdf = []</span>
+<span class="c1">#        shfunc, func = -1, -1</span>
+<span class="c1">#        for seht, x, y, z in zip(universe.atom[&#39;set&#39;], universe.atom[&#39;x&#39;],</span>
+<span class="c1">#                                 universe.atom[&#39;y&#39;], universe.atom[&#39;z&#39;]):</span>
+<span class="c1">#            summ = universe.basis_set_summary.ix[seht]</span>
+<span class="c1">#            b = bases.get_group(seht).groupby(&#39;shell_function&#39;)</span>
+<span class="c1">#            for sh, prims in b:</span>
+<span class="c1">#                if len(prims) == 0: continue</span>
+<span class="c1">#                l = prims[&#39;L&#39;].cat.as_ordered().max()</span>
+<span class="c1">#                shfunc += 1</span>
+<span class="c1">#                for l, m, n in enum_cartesian[l]:</span>
+<span class="c1">#                    func += 1</span>
+<span class="c1">#                    for alpha, d in zip(prims[&#39;alpha&#39;], prims[&#39;d&#39;]):</span>
+<span class="c1">#                        primdf.append([x, y, z, alpha, d, l, m, n, l + m + n, sh, shfunc, func, seht])</span>
+<span class="c1">#        primdf = pd.DataFrame(primdf)</span>
+<span class="c1">#        primdf.columns = [&#39;xa&#39;, &#39;ya&#39;, &#39;za&#39;, &#39;alpha&#39;, &#39;d&#39;, &#39;l&#39;, &#39;m&#39;, &#39;n&#39;, &#39;L&#39;, &#39;shell_function&#39;, &#39;shell&#39;, &#39;func&#39;, &#39;set&#39;]</span>
+<span class="c1">#        if inplace:</span>
+<span class="c1">#            universe.primitive = primdf</span>
+<span class="c1">#        else:</span>
+<span class="c1">#            return cls(primdf)</span>
+
+
+<span class="c1">#class BasisSetOrder(BasisSet):</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    BasisSetOrder uniquely determines the basis function ordering scheme for</span>
+<span class="c1">#    a given :class:`~exatomic.universe.Universe`. This table should be used</span>
+<span class="c1">#    if the ordering scheme is not programmatically available.</span>
+<span class="c1">#</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | Column            | Type     | Description                               |</span>
+<span class="c1">#    +===================+==========+===========================================+</span>
+<span class="c1">#    | tag               | str      | symbolic atomic center                    |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | center            | int      | numeric atomic center (1-based)           |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | type              | str      | identifier equivalent to (l, ml)          |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    _columns = [&#39;tag&#39;, &#39;center&#39;, &#39;type&#39;]</span>
+<span class="c1">#    _index = &#39;chi&#39;</span>
+<span class="c1">#    _categories = {&#39;center&#39;: np.int64, &#39;symbol&#39;: str}</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#class PlanewaveBasisSet(BasisSet):</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    pass</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#class CartesianGTFOrder(DataFrame):</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    Stores cartesian basis function order with respect to basis function label.</span>
+<span class="c1">#</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | Column            | Type     | Description                               |</span>
+<span class="c1">#    +===================+==========+===========================================+</span>
+<span class="c1">#    | frame             | int/cat  | non-unique integer                        |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | x                 | int      | power of x                                |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | y                 | int      | power of y                                |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | z                 | int      | power of z                                |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    | l                 | int      | x + y + z                                 |</span>
+<span class="c1">#    +-------------------+----------+-------------------------------------------+</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    _columns = [&#39;l&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;frame&#39;]</span>
+<span class="c1">#    _index = &#39;cart_order&#39;</span>
+<span class="c1">#    _traits = [&#39;l&#39;]</span>
+<span class="c1">#    _categories = {&#39;l&#39;: np.int64, &#39;x&#39;: np.int64, &#39;y&#39;: np.int64, &#39;z&#39;: np.int64}</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#    @classmethod</span>
+<span class="c1">#    def from_lmax_order(cls, lmax, ordering_function):</span>
+<span class="c1">#        &quot;&quot;&quot;</span>
+<span class="c1">#        Generate the dataframe of cartesian basis function ordering with</span>
+<span class="c1">#        respect to spin angular momentum.</span>
+<span class="c1">#</span>
+<span class="c1">#        Args:</span>
+<span class="c1">#            lmax (int): Maximum value of orbital angular momentum</span>
+<span class="c1">#            ordering_function: Cartesian ordering function (code specific)</span>
+<span class="c1">#        &quot;&quot;&quot;</span>
+<span class="c1">#        df = pd.DataFrame(np.concatenate([ordering_function(l) for l in range(lmax + 1)]),</span>
+<span class="c1">#                          columns=[&#39;l&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;])</span>
+<span class="c1">#        df[&#39;frame&#39;] = 0</span>
+<span class="c1">#        return cls(df)</span>
+<span class="c1">#</span>
+<span class="c1">#    def symbolic_keys(self):</span>
+<span class="c1">#        &quot;&quot;&quot;</span>
+<span class="c1">#        Generate the enumerated symbolic keys (e.g. &#39;x&#39;, &#39;xx&#39;, &#39;xxyy&#39;, etc.)</span>
+<span class="c1">#        associated with each row for ordering purposes.</span>
+<span class="c1">#        &quot;&quot;&quot;</span>
+<span class="c1">#        x = self[&#39;x&#39;].apply(lambda i: &#39;x&#39; * i).astype(str)</span>
+<span class="c1">#        y = self[&#39;y&#39;].apply(lambda i: &#39;y&#39; * i).astype(str)</span>
+<span class="c1">#        z = self[&#39;z&#39;].apply(lambda i: &#39;z&#39; * i).astype(str)</span>
+<span class="c1">#        return x + y + z</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#################################################################################</span>
+<span class="c1">#import sympy as sy</span>
+<span class="c1">#from exa.symbolic import SymbolicFunction</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#class SlaterTypeBasisFunction(SymbolicFunction):</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    Args:</span>
+<span class="c1">#        xa (float): Basis center in x</span>
+<span class="c1">#        ya (float): Basis center in y</span>
+<span class="c1">#        za (float): Basis center in z</span>
+<span class="c1">#        kx (int): Spherical harmonic coefficient in x</span>
+<span class="c1">#        ky (int): Spherical harmonic coefficient in y</span>
+<span class="c1">#        kz (int): Spherical harmonic coefficient in z</span>
+<span class="c1">#        kr (int): Spherical harmonic coefficient in r</span>
+<span class="c1">#        zeta (float): Positive exponential coefficient</span>
+<span class="c1">#</span>
+<span class="c1">#    .. math:</span>
+<span class="c1">#</span>
+<span class="c1">#        \Chi_{A}\left(x, y, z\right) = r_{A}^{k_r}x_{A}^{k_x}y_{A}^{k_y}z_{A}^{k_z}e^{-\zeta r_{A}}</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    kr, kx, ky, kz = sy.symbols(&quot;k_r k_x k_y k_z&quot;, imaginary=False, positive=True, integer=True)</span>
+<span class="c1">#    x, y, z, xa, ya, za = sy.symbols(&quot;x y z x_A y_A z_A&quot;, imaginary=False)</span>
+<span class="c1">#    zeta = sy.Symbol(&quot;zeta&quot;, imaginary=False, positive=True)</span>
+<span class="c1">#    xx = x - xa</span>
+<span class="c1">#    yy = y - ya</span>
+<span class="c1">#    zz = z - za</span>
+<span class="c1">#    r = sy.sqrt(xx**2 + yy**2 + zz**2)</span>
+<span class="c1">#    expr = r**kr * x**kx * y**ky * z**kz * sy.exp(-zeta*r)</span>
+<span class="c1">#</span>
+<span class="c1">#    @classmethod</span>
+<span class="c1">#    def eval(cls, xa=None, ya=None, za=None, kx=None, ky=None, kz=None,</span>
+<span class="c1">#             kr=None, zeta=None):</span>
+<span class="c1">#        &quot;&quot;&quot;</span>
+<span class="c1">#        &quot;&quot;&quot;</span>
+<span class="c1">#        subs = {}</span>
+<span class="c1">#        if xa is not None:</span>
+<span class="c1">#            subs[cls.xa] = xa</span>
+<span class="c1">#        if ya is not None:</span>
+<span class="c1">#            subs[cls.ya] = ya</span>
+<span class="c1">#        if za is not None:</span>
+<span class="c1">#            subs[cls.za] = za</span>
+<span class="c1">#        if kr is not None:</span>
+<span class="c1">#            subs[cls.kr] = kr</span>
+<span class="c1">#        if kx is not None:</span>
+<span class="c1">#            subs[cls.kx] = kx</span>
+<span class="c1">#        if ky is not None:</span>
+<span class="c1">#            subs[cls.ky] = ky</span>
+<span class="c1">#        if kz is not None:</span>
+<span class="c1">#            subs[cls.kz] = kz</span>
+<span class="c1">#        if zeta is not None:</span>
+<span class="c1">#            subs[cls.zeta] = zeta</span>
+<span class="c1">#        print(subs)</span>
+<span class="c1">#        expr = cls.expr.subs(subs)</span>
+<span class="c1">#        return super().new_expression(expr, &quot;vectorize&quot;)</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Tom Duignan, Alex Marchenko.
+      Last updated on Mar 31, 2017.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.3.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

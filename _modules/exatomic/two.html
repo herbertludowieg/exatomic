@@ -1,0 +1,585 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>exatomic.two &mdash; exatomic 0.3.8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="exatomic 0.3.8 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> exatomic
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">General Info</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Exatomic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/api.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributor Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/overview.html">Overview</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">exatomic</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>exatomic.two</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for exatomic.two</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># Copyright (c) 2015-2016, Exa Analytics Development Team</span>
+<span class="c1"># Distributed under the terms of the Apache License 2.0</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Two Body Properties</span>
+<span class="sd">##################################</span>
+<span class="sd">This module provides functions for computing two body properties. A body can be,</span>
+<span class="sd">for example, an atom (such that two body properties correspond to inter-atomic</span>
+<span class="sd">distances - bonds), or a molecule (such that two body properties correspond to</span>
+<span class="sd">distances between molecule centers of mass). The following table provides a</span>
+<span class="sd">guide for the types of data found in two body tables provided by this module</span>
+<span class="sd">(specifically for atom two body properties).</span>
+
+<span class="sd">+-------------------+----------+---------------------------------------------+</span>
+<span class="sd">| Column            | Type     | Description                                 |</span>
+<span class="sd">+===================+==========+=============================================+</span>
+<span class="sd">| atom0             | integer  | foreign key to :class:`~exatomic.atom.Atom` |</span>
+<span class="sd">+-------------------+----------+---------------------------------------------+</span>
+<span class="sd">| atom1             | integer  | foreign key to :class:`~exatomic.atom.Atom` |</span>
+<span class="sd">+-------------------+----------+---------------------------------------------+</span>
+<span class="sd">| distance          | float    | distance between atom0 and atom1            |</span>
+<span class="sd">+-------------------+----------+---------------------------------------------+</span>
+<span class="sd">| bond              | boolean  | True if bond                                |</span>
+<span class="sd">+-------------------+----------+---------------------------------------------+</span>
+<span class="sd">| frame             | category | non-unique integer (req.)                   |</span>
+<span class="sd">+-------------------+----------+---------------------------------------------+</span>
+<span class="sd">| symbols           | category | concatenated atomic symbols                 |</span>
+<span class="sd">+-------------------+----------+---------------------------------------------+</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">traitlets</span> <span class="k">import</span> <span class="n">Unicode</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">exa.core.numerical</span> <span class="k">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">SparseDataFrame</span>
+    <span class="kn">from</span> <span class="nn">exa.cms.isotope</span> <span class="k">import</span> <span class="n">symbol_to_radius</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">exa.numerical</span> <span class="k">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">SparseDataFrame</span>
+    <span class="kn">from</span> <span class="nn">exa.relational.isotope</span> <span class="k">import</span> <span class="n">symbol_to_radius</span>
+<span class="kn">from</span> <span class="nn">exa.math.vector.cartesian</span> <span class="k">import</span> <span class="n">pdist_euc_dxyz_idx</span>
+<span class="kn">from</span> <span class="nn">exatomic.algorithms.distance</span> <span class="k">import</span> <span class="n">periodic_pdist_euc_dxyz_idx</span>
+
+
+<div class="viewcode-block" id="AtomTwo"><a class="viewcode-back" href="../../api/basic_tables.html#exatomic.container.AtomTwo">[docs]</a><span class="k">class</span> <span class="nc">AtomTwo</span><span class="p">(</span><span class="n">DataFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interatomic distances generated from the :class:`~exatomic.atom.Atom` table.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_index</span> <span class="o">=</span> <span class="s1">&#39;two&#39;</span>
+    <span class="n">_cardinal</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dx&#39;</span><span class="p">,</span> <span class="s1">&#39;dy&#39;</span><span class="p">,</span> <span class="s1">&#39;dz&#39;</span><span class="p">,</span> <span class="s1">&#39;atom0&#39;</span><span class="p">,</span> <span class="s1">&#39;atom1&#39;</span><span class="p">,</span> <span class="s1">&#39;distance&#39;</span><span class="p">]</span>
+    <span class="n">_categories</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;symbols&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;atom0&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="s1">&#39;atom1&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">}</span>
+
+<div class="viewcode-block" id="AtomTwo.compute_bonds"><a class="viewcode-back" href="../../api/basic_tables.html#exatomic.container.AtomTwo.compute_bonds">[docs]</a>    <span class="k">def</span> <span class="nf">compute_bonds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symbols</span><span class="p">,</span> <span class="n">mapper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bond_extra</span><span class="o">=</span><span class="mf">0.45</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update bonds based on radii and an extra factor (in atomic units).</span>
+
+<span class="sd">        .. code-block:: Python</span>
+
+<span class="sd">            symbols = universe.atom[&#39;symbol&#39;]</span>
+<span class="sd">            mapper = {&#39;C&#39;: 2.0}    # atomic units - Bohr</span>
+<span class="sd">            bond_extra = 0.2       # ditto</span>
+<span class="sd">            # updates universe.atom_two[&#39;bond&#39;]</span>
+<span class="sd">            universe.atom_two.compute_bonds(symbols, mapper, bond_extra)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            symbols: Series of symbols from the atom table (e.g. uni.atom[&#39;symbol&#39;])</span>
+<span class="sd">            mapper (dict): Dictionary of symbol, radii pairs (see note below)</span>
+<span class="sd">            bond_extra (float): Extra additive factor to include when computing bonds</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If the mapper is none, or is missing data, the computation will use</span>
+<span class="sd">            default covalent radii available in :class:`~exa.relational.isotope`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mapper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mapper</span> <span class="o">=</span> <span class="n">symbol_to_radius</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">symbol</span> <span class="ow">in</span> <span class="n">mapper</span> <span class="k">for</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="n">symbols</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
+            <span class="n">sym2rad</span> <span class="o">=</span> <span class="n">symbol_to_radius</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="n">symbols</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">symbol</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mapper</span><span class="p">:</span>
+                    <span class="n">mapper</span><span class="p">[</span><span class="n">symbol</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym2rad</span><span class="p">[</span><span class="n">symbol</span><span class="p">]</span>
+        <span class="c1"># Note that the mapper is transformed here, but the same name is used...</span>
+        <span class="n">mapper</span> <span class="o">=</span> <span class="n">symbols</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapper</span><span class="p">)</span>
+        <span class="n">radius0</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;atom0&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapper</span><span class="p">)</span>
+        <span class="n">radius1</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;atom1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapper</span><span class="p">)</span>
+        <span class="n">mbl</span> <span class="o">=</span> <span class="n">radius0</span> <span class="o">+</span> <span class="n">radius1</span> <span class="o">+</span> <span class="n">bond_extra</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;bond&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">mbl</span></div>
+
+    <span class="k">def</span> <span class="nf">_bond_traits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_mapper</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Traits representing bonded atoms are reported as two lists of equal</span>
+<span class="sd">        length with atom labels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bonded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;bond&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;atom0&#39;</span><span class="p">,</span> <span class="s1">&#39;atom1&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">]]</span>
+        <span class="n">lbl0</span> <span class="o">=</span> <span class="n">bonded</span><span class="p">[</span><span class="s1">&#39;atom0&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">label_mapper</span><span class="p">)</span>
+        <span class="n">lbl1</span> <span class="o">=</span> <span class="n">bonded</span><span class="p">[</span><span class="s1">&#39;atom1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">label_mapper</span><span class="p">)</span>
+        <span class="n">lbl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">lbl0</span><span class="p">,</span> <span class="n">lbl1</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">lbl</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bonded</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span>
+        <span class="n">bond_grps</span> <span class="o">=</span> <span class="n">lbl</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">)</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">b0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">),</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;O&#39;</span><span class="p">)</span>
+        <span class="n">b1</span> <span class="o">=</span> <span class="n">b0</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">b0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bond_grps</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">frame</span><span class="p">)[</span><span class="s1">&#39;atom0&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">b1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bond_grps</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">frame</span><span class="p">)[</span><span class="s1">&#39;atom1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">b0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">b1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">b0</span> <span class="o">=</span> <span class="n">Unicode</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">b0</span><span class="p">)</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;values&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">b1</span> <span class="o">=</span> <span class="n">Unicode</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">b1</span><span class="p">)</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;values&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;two_bond0&#39;</span><span class="p">:</span> <span class="n">b0</span><span class="p">,</span> <span class="s1">&#39;two_bond1&#39;</span><span class="p">:</span> <span class="n">b1</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="MoleculeTwo"><a class="viewcode-back" href="../../api/basic_tables.html#exatomic.container.MoleculeTwo">[docs]</a><span class="k">class</span> <span class="nc">MoleculeTwo</span><span class="p">(</span><span class="n">DataFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="compute_atom_two"><a class="viewcode-back" href="../../api/basic_tables.html#exatomic.container.compute_atom_two">[docs]</a><span class="k">def</span> <span class="nf">compute_atom_two</span><span class="p">(</span><span class="n">universe</span><span class="p">,</span> <span class="n">mapper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bond_extra</span><span class="o">=</span><span class="mf">0.45</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute interatomic distances and determine bonds.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        universe: An atomic universe</span>
+<span class="sd">        mapper (dict): Dictionary of symbol, radii pairs (see note below)</span>
+<span class="sd">        bond_extra (float): Extra additive factor to include when computing bonds</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">universe</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">is_periodic</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">compute_periodic_two_si</span><span class="p">(</span><span class="n">universe</span><span class="p">,</span> <span class="n">mapper</span><span class="p">,</span> <span class="n">bond_extra</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">compute_free_two_si</span><span class="p">(</span><span class="n">universe</span><span class="p">,</span> <span class="n">mapper</span><span class="p">,</span> <span class="n">bond_extra</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="compute_free_two_si"><a class="viewcode-back" href="../../api/basic_tables.html#exatomic.container.compute_free_two_si">[docs]</a><span class="k">def</span> <span class="nf">compute_free_two_si</span><span class="p">(</span><span class="n">universe</span><span class="p">,</span> <span class="n">mapper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bond_extra</span><span class="o">=</span><span class="mf">0.45</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serial, in memory computation of two body properties for free boundary</span>
+<span class="sd">    condition systems.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">frame</span><span class="p">[</span><span class="s1">&#39;atom_count&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">dz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">atom0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">atom1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">fdx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">stop</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">frame</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">universe</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">cardinal_groupby</span><span class="p">():</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">dxx</span><span class="p">,</span> <span class="n">dyy</span><span class="p">,</span> <span class="n">dzz</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">a0</span><span class="p">,</span> <span class="n">a1</span> <span class="o">=</span> <span class="n">pdist_euc_dxyz_idx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+        <span class="n">stop</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dxx</span><span class="p">)</span>
+        <span class="n">dx</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span> <span class="o">=</span> <span class="n">dxx</span>
+        <span class="n">dy</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span> <span class="o">=</span> <span class="n">dyy</span>
+        <span class="n">dz</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span> <span class="o">=</span> <span class="n">dzz</span>
+        <span class="n">atom0</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span> <span class="o">=</span> <span class="n">a0</span>
+        <span class="n">atom1</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span> <span class="o">=</span> <span class="n">a1</span>
+        <span class="n">distance</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span> <span class="o">=</span> <span class="n">dist</span>
+        <span class="n">fdx</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span> <span class="o">=</span> <span class="n">frame</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">stop</span>
+    <span class="n">atom0</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">atom0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+    <span class="n">atom1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">atom1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+    <span class="n">fdx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">fdx</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+    <span class="n">two</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s1">&#39;dx&#39;</span><span class="p">:</span> <span class="n">dx</span><span class="p">,</span> <span class="s1">&#39;dy&#39;</span><span class="p">:</span> <span class="n">dy</span><span class="p">,</span> <span class="s1">&#39;dz&#39;</span><span class="p">:</span> <span class="n">dz</span><span class="p">,</span> <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="n">distance</span><span class="p">,</span>
+                                  <span class="s1">&#39;atom0&#39;</span><span class="p">:</span> <span class="n">atom0</span><span class="p">,</span> <span class="s1">&#39;atom1&#39;</span><span class="p">:</span> <span class="n">atom1</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">:</span> <span class="n">frame</span><span class="p">})</span>
+    <span class="n">two</span> <span class="o">=</span> <span class="n">AtomTwo</span><span class="p">(</span><span class="n">two</span><span class="p">)</span>
+    <span class="n">two</span><span class="o">.</span><span class="n">compute_bonds</span><span class="p">(</span><span class="n">universe</span><span class="o">.</span><span class="n">atom</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">],</span> <span class="n">mapper</span><span class="o">=</span><span class="n">mapper</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">two</span></div>
+
+
+<div class="viewcode-block" id="compute_periodic_two_si"><a class="viewcode-back" href="../../api/basic_tables.html#exatomic.container.compute_periodic_two_si">[docs]</a><span class="k">def</span> <span class="nf">compute_periodic_two_si</span><span class="p">(</span><span class="n">universe</span><span class="p">,</span> <span class="n">mapper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bond_extra</span><span class="o">=</span><span class="mf">0.45</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute periodic two body properties.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">grps</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">atom</span><span class="p">[[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">grps</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grps</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="n">grps</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">universe</span><span class="o">.</span><span class="n">unit_atom</span><span class="p">)</span>
+    <span class="n">grps</span> <span class="o">=</span> <span class="n">grps</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">grps</span><span class="o">.</span><span class="n">ngroups</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="n">dz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="n">atom0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="n">atom1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="n">fdx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="n">px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="n">py</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="n">pz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">stop</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">grp</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">grps</span><span class="p">):</span>
+        <span class="n">ux</span> <span class="o">=</span> <span class="n">grp</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">uy</span> <span class="o">=</span> <span class="n">grp</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">uz</span> <span class="o">=</span> <span class="n">grp</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">sidx</span> <span class="o">=</span> <span class="n">grp</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">rx</span><span class="p">,</span> <span class="n">ry</span><span class="p">,</span> <span class="n">rz</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="n">frame</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;rx&#39;</span><span class="p">,</span> <span class="s1">&#39;ry&#39;</span><span class="p">,</span> <span class="s1">&#39;rz&#39;</span><span class="p">]]</span>
+        <span class="n">dxx</span><span class="p">,</span> <span class="n">dyy</span><span class="p">,</span> <span class="n">dzz</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">a0</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">pxx</span><span class="p">,</span> <span class="n">pyy</span><span class="p">,</span> <span class="n">pzz</span> <span class="o">=</span> <span class="n">periodic_pdist_euc_dxyz_idx</span><span class="p">(</span><span class="n">ux</span><span class="p">,</span> <span class="n">uy</span><span class="p">,</span> <span class="n">uz</span><span class="p">,</span> <span class="n">rx</span><span class="p">,</span> <span class="n">ry</span><span class="p">,</span> <span class="n">rz</span><span class="p">,</span> <span class="n">sidx</span><span class="p">)</span>
+        <span class="n">nnn</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dxx</span><span class="p">)</span>
+        <span class="n">stop</span> <span class="o">+=</span> <span class="n">nnn</span>
+        <span class="n">dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dxx</span>
+        <span class="n">dy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dyy</span>
+        <span class="n">dz</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dzz</span>
+        <span class="n">distance</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
+        <span class="n">atom0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a0</span>
+        <span class="n">atom1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a1</span>
+        <span class="n">px</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pxx</span>
+        <span class="n">py</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyy</span>
+        <span class="n">pz</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pzz</span>
+        <span class="n">fdx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">frame</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nnn</span><span class="p">)]</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">stop</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">dx</span><span class="p">)</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">dy</span><span class="p">)</span>
+    <span class="n">dz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">dz</span><span class="p">)</span>
+    <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span>
+    <span class="n">px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">px</span><span class="p">)</span>
+    <span class="n">py</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">py</span><span class="p">)</span>
+    <span class="n">pz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">pz</span><span class="p">)</span>
+    <span class="n">atom0</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">atom0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+    <span class="n">atom1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">atom1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+    <span class="n">fdx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">fdx</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+    <span class="n">two</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s1">&#39;dx&#39;</span><span class="p">:</span><span class="n">dx</span><span class="p">,</span> <span class="s1">&#39;dy&#39;</span><span class="p">:</span> <span class="n">dy</span><span class="p">,</span> <span class="s1">&#39;dz&#39;</span><span class="p">:</span> <span class="n">dz</span><span class="p">,</span> <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="n">distance</span><span class="p">,</span>
+                                  <span class="s1">&#39;atom0&#39;</span><span class="p">:</span> <span class="n">atom0</span><span class="p">,</span> <span class="s1">&#39;atom1&#39;</span><span class="p">:</span> <span class="n">atom1</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">:</span> <span class="n">fdx</span><span class="p">})</span>
+    <span class="n">patom</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">px</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">py</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="n">pz</span><span class="p">})</span>
+    <span class="n">two</span> <span class="o">=</span> <span class="n">AtomTwo</span><span class="p">(</span><span class="n">two</span><span class="p">)</span>
+    <span class="n">two</span><span class="o">.</span><span class="n">compute_bonds</span><span class="p">(</span><span class="n">universe</span><span class="o">.</span><span class="n">atom</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">],</span> <span class="n">mapper</span><span class="o">=</span><span class="n">mapper</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">two</span><span class="p">,</span> <span class="n">patom</span></div>
+
+
+<div class="viewcode-block" id="compute_bond_count"><a class="viewcode-back" href="../../api/basic_tables.html#exatomic.container.compute_bond_count">[docs]</a><span class="k">def</span> <span class="nf">compute_bond_count</span><span class="p">(</span><span class="n">universe</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes bond count (number of bonds associated with a given atom index).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        universe (:class:`~exatomic.universe.Universe`): Atomic universe</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        counts (:class:`~numpy.ndarray`): Bond counts</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        For both periodic and non-periodic universes, counts returned are</span>
+<span class="sd">        atom indexed. Counts for projected atoms have no meaning/are not</span>
+<span class="sd">        computed during two body property calculation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stack</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">atom_two</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="n">universe</span><span class="o">.</span><span class="n">atom_two</span><span class="p">[</span><span class="s1">&#39;bond&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;atom0&#39;</span><span class="p">,</span> <span class="s1">&#39;atom1&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">stack</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="compute_molecule_two"><a class="viewcode-back" href="../../api/basic_tables.html#exatomic.container.compute_molecule_two">[docs]</a><span class="k">def</span> <span class="nf">compute_molecule_two</span><span class="p">(</span><span class="n">universe</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+
+
+
+
+<span class="c1">#def bond_summary_by_label_pairs(universe, *labels, length=&#39;A&#39;, stdev=False,</span>
+<span class="c1">#                                stderr=False, variance=False, ncount=False):</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    Compute a summary of bond lengths by label pairs</span>
+<span class="c1">#</span>
+<span class="c1">#    Args:</span>
+<span class="c1">#        universe: The atomic container</span>
+<span class="c1">#        \*labels: Any number of label pairs (e.g. ...paris(uni, (0, 1), (1, 0), ...))</span>
+<span class="c1">#        length (str): Output length unit (default Angstrom)</span>
+<span class="c1">#        stdev (bool): Compute the standard deviation of the mean (default false)</span>
+<span class="c1">#        stderr (bool): Compute the standard error in the mean (default false)</span>
+<span class="c1">#        variance (bool): Compute the variance in the mean (default false)</span>
+<span class="c1">#        ncount (bool): Include the data point count (default false)</span>
+<span class="c1">#</span>
+<span class="c1">#    Returns:</span>
+<span class="c1">#        summary (:class:`~pandas.DataFrame`): Bond length dataframe</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    l0, l1 = list(zip(*labels))</span>
+<span class="c1">#    l0 = np.array(l0, dtype=np.int64)</span>
+<span class="c1">#    l1 = np.array(l1, dtype=np.int64)</span>
+<span class="c1">#    ids = unordered_pairing(l0, l1)</span>
+<span class="c1">#    bonded = universe.two[universe.two[&#39;bond&#39;] == True].copy()</span>
+<span class="c1">#    if universe.is_periodic:</span>
+<span class="c1">#        bonded[&#39;atom0&#39;] = bonded[&#39;prjd_atom0&#39;].map(universe.projected_atom[&#39;atom&#39;])</span>
+<span class="c1">#        bonded[&#39;atom1&#39;] = bonded[&#39;prjd_atom1&#39;].map(universe.projected_atom[&#39;atom&#39;])</span>
+<span class="c1">#    bonded[&#39;label0&#39;] = bonded[&#39;atom0&#39;].map(universe.atom[&#39;label&#39;])</span>
+<span class="c1">#    bonded[&#39;label1&#39;] = bonded[&#39;atom1&#39;].map(universe.atom[&#39;label&#39;])</span>
+<span class="c1">#    bonded[&#39;id&#39;] = unordered_pairing(bonded[&#39;label0&#39;].values.astype(np.int64),</span>
+<span class="c1">#                                     bonded[&#39;label1&#39;].values.astype(np.int64))</span>
+<span class="c1">#    return bonded[bonded[&#39;id&#39;].isin(ids)]</span>
+<span class="c1">#    grps = bonded[bonded[&#39;id&#39;].isin(ids)].groupby(&#39;id&#39;)</span>
+<span class="c1">#    df = grps[&#39;distance&#39;].mean().reset_index()</span>
+<span class="c1">#    if variance:</span>
+<span class="c1">#        df[&#39;variance&#39;] = grps[&#39;distance&#39;].var().reset_index()[&#39;distance&#39;]</span>
+<span class="c1">#        df[&#39;variance&#39;] *= Length[&#39;au&#39;, length]</span>
+<span class="c1">#    if stderr:</span>
+<span class="c1">#        df[&#39;stderr&#39;] = grps[&#39;distance&#39;].std().reset_index()[&#39;distance&#39;]</span>
+<span class="c1">#        df[&#39;stderr&#39;] /= np.sqrt(grps[&#39;distance&#39;].size().values[0])</span>
+<span class="c1">#        df[&#39;stderr&#39;] *= Length[&#39;au&#39;, length]</span>
+<span class="c1">#    if stdev:</span>
+<span class="c1">#        df[&#39;stdev&#39;] = grps[&#39;distance&#39;].std().reset_index()[&#39;distance&#39;]</span>
+<span class="c1">#        df[&#39;stdev&#39;] *= Length[&#39;au&#39;, length]</span>
+<span class="c1">#    if ncount:</span>
+<span class="c1">#        df[&#39;count&#39;] = grps[&#39;distance&#39;].size().reset_index()[0]</span>
+<span class="c1">#    mapper = bonded.drop_duplicates(&#39;id&#39;).set_index(&#39;id&#39;)</span>
+<span class="c1">#    df[&#39;symbols&#39;] = df[&#39;id&#39;].map(mapper[&#39;symbols&#39;])</span>
+<span class="c1">#    df[&#39;distance&#39;] *= Length[&#39;au&#39;, length]</span>
+<span class="c1">#    df[&#39;label0&#39;] = df[&#39;id&#39;].map(mapper[&#39;label0&#39;])</span>
+<span class="c1">#    df[&#39;label1&#39;] = df[&#39;id&#39;].map(mapper[&#39;label1&#39;])</span>
+<span class="c1">#    del df[&#39;id&#39;]</span>
+<span class="c1">#    return df</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#def n_nearest_distances_by_symbols(universe, a, b, n, length=&#39;A&#39;, stdev=False,</span>
+<span class="c1">#                                   stderr=False, variance=False, ncount=False):</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    Compute a distance summary of the n nearest pairs of symbols, (a, b).</span>
+<span class="c1">#</span>
+<span class="c1">#    Args:</span>
+<span class="c1">#        universe: The atomic universe</span>
+<span class="c1">#        a (str): Symbol string</span>
+<span class="c1">#        b (str): Symbol string</span>
+<span class="c1">#        n (int): Number of distances to include</span>
+<span class="c1">#        stdev (bool): Compute the standard deviation of the mean (default false)</span>
+<span class="c1">#        stderr (bool): Compute the standard error in the mean (default false)</span>
+<span class="c1">#        variance (bool): Compute the variance in the mean (default false)</span>
+<span class="c1">#        ncount (bool): Include the data point count (default false)</span>
+<span class="c1">#</span>
+<span class="c1">#    Returns:</span>
+<span class="c1">#        summary (:class:`~pandas.DataFrame`): Distance summary dataframe</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    def compute(group):</span>
+<span class="c1">#        return group.sort_values(&#39;distance&#39;).iloc[:n]</span>
+<span class="c1">#</span>
+<span class="c1">#    df = universe.two[universe.two[&#39;symbols&#39;].isin([a+b, b+a])]</span>
+<span class="c1">#    df = df.groupby(&#39;frame&#39;).apply(compute)</span>
+<span class="c1">#    df[&#39;pair&#39;] = list(range(n)) * (len(df) // n)</span>
+<span class="c1">#    pvd = df.pivot(&#39;frame&#39;, &#39;pair&#39;, &#39;distance&#39;)</span>
+<span class="c1">#    df = pvd.mean(0).reset_index()</span>
+<span class="c1">#    df.columns = [&#39;pair&#39;, &#39;distance&#39;]</span>
+<span class="c1">#    df[&#39;distance&#39;] *= Length[&#39;au&#39;, length]</span>
+<span class="c1">#    if stdev:</span>
+<span class="c1">#        df[&#39;stdev&#39;] = pvd.std().reset_index()[0]</span>
+<span class="c1">#        df[&#39;stdev&#39;] *= Length[&#39;au&#39;, length]</span>
+<span class="c1">#    if stderr:</span>
+<span class="c1">#        df[&#39;stderr&#39;] = pvd.std().reset_index()[0]</span>
+<span class="c1">#        df[&#39;stderr&#39;] /= np.sqrt(len(pvd))</span>
+<span class="c1">#        df[&#39;stderr&#39;] *= Length[&#39;au&#39;, length]</span>
+<span class="c1">#    if variance:</span>
+<span class="c1">#        df[&#39;variance&#39;] = pvd.var().reset_index()[0]</span>
+<span class="c1">#        df[&#39;variance&#39;] *= Length[&#39;au&#39;, length]</span>
+<span class="c1">#    if ncount:</span>
+<span class="c1">#        df[&#39;count&#39;] = pvd.shape[0]</span>
+<span class="c1">#    return df</span>
+<span class="c1">#</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Tom Duignan, Alex Marchenko.
+      Last updated on Mar 31, 2017.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.3.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,363 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Three Body Properties Table &mdash; exatomic 0.3.8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="exatomic 0.3.8 documentation" href="../index.html"/>
+        <link rel="up" title="API" href="api.html"/>
+        <link rel="next" title="Atomic Field" href="orbital_tables.html"/>
+        <link rel="prev" title="Frame Data" href="basic_tables.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> exatomic
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">General Info</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Exatomic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Exatomic Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#exceptions">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html">Atomic Editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#universe-notebook-widget">Universe Notebook Widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#the-atomic-universe">The Atomic Universe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#simple-formula">Simple Formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_tables.html">Frame Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_tables.html#atomic-position-data">Atomic Position Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_tables.html#two-body-properties">Two Body Properties</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Three Body Properties Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#four-body-properties">Four Body Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#molecule-table">Molecule Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orbital_tables.html">Atomic Field</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orbital_tables.html#basis-set-representations">Basis Set Representations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orbital_tables.html#orbital-dataframe">Orbital DataFrame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filetypes/xyz.html">XYZ File Editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filetypes/cube.html">Cube File Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/universe.html">Universe Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/app.html">Universe Visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/field.html">Atomic Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/ao.html">Atomic Orbitals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/harmonics.html">Solid Harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/gaussian.html">Gaussian Orbitals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/gtf.html">Gaussian Type Functions</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Contributor Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../dev/overview.html">Overview</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">exatomic</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="api.html">API</a> &raquo;</li>
+        
+      <li>Three Body Properties Table</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/advanced_tables.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-exatomic.three"></span><div class="section" id="three-body-properties-table">
+<h1>Three Body Properties Table<a class="headerlink" href="#three-body-properties-table" title="Permalink to this headline">¶</a></h1>
+</div>
+<span class="target" id="module-exatomic.four"></span><div class="section" id="four-body-properties">
+<h1>Four Body Properties<a class="headerlink" href="#four-body-properties" title="Permalink to this headline">¶</a></h1>
+</div>
+<span class="target" id="module-exatomic.molecule"></span><div class="section" id="molecule-table">
+<h1>Molecule Table<a class="headerlink" href="#molecule-table" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="exatomic.molecule.Molecule">
+<em class="property">class </em><code class="descclassname">exatomic.molecule.</code><code class="descname">Molecule</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/molecule.html#Molecule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.molecule.Molecule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Description of molecules in the atomic universe.</p>
+<dl class="method">
+<dt id="exatomic.molecule.Molecule.classify">
+<code class="descname">classify</code><span class="sig-paren">(</span><em>*classifiers</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/molecule.html#Molecule.classify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.molecule.Molecule.classify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Classify molecules into arbitrary categories.</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="n">u</span><span class="o">.</span><span class="n">molecule</span><span class="o">.</span><span class="n">classify</span><span class="p">((</span><span class="s1">&#39;solute&#39;</span><span class="p">,</span> <span class="s1">&#39;Na&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;solvent&#39;</span><span class="p">,</span> <span class="s1">&#39;H(2)O(1)&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>classifiers</strong> &#8211; Any number of tuples of the form (&#8216;label&#8217;, &#8216;identifier&#8217;, exact) (see below)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A classifier has 3 parts, &#8220;label&#8221;, e.g. &#8220;solvent&#8221;, &#8220;identifier&#8221;, e.g.
+&#8220;H(2)O(1)&#8221;, and exact (true or false). If exact is false (default),
+classification is greedy and (in this example) molecules with formulas
+&#8220;H(1)O(1)&#8221;, &#8220;H(3)O(1)&#8221;, etc. would get classified as &#8220;solvent&#8221;. If,
+instead, exact were set to true, those molecules would remain
+unclassified.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Classifiers are applied in the order passed; where identifiers overlap,
+the latter classification is used.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-func docutils literal"><span class="pre">compute_nearest_molecules()</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.molecule.Molecule.get_atom_count">
+<code class="descname">get_atom_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/molecule.html#Molecule.get_atom_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.molecule.Molecule.get_atom_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the number of atoms per molecule.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.molecule.Molecule.get_formula">
+<code class="descname">get_formula</code><span class="sig-paren">(</span><em>as_map=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/molecule.html#Molecule.get_formula"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.molecule.Molecule.get_formula" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the string representation of the molecule.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="exatomic.molecule.compute_molecule">
+<code class="descclassname">exatomic.molecule.</code><code class="descname">compute_molecule</code><span class="sig-paren">(</span><em>universe</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/molecule.html#compute_molecule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.molecule.compute_molecule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cluster atoms into molecules and create the <a class="reference internal" href="#exatomic.molecule.Molecule" title="exatomic.molecule.Molecule"><code class="xref py py-class docutils literal"><span class="pre">Molecule</span></code></a>
+table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>universe</strong> &#8211; Atomic universe</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>molecule</em> &#8211; Molecule table</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This function modifies the universe&#8217;s atom (<a class="reference internal" href="basic_tables.html#exatomic.atom.Atom" title="exatomic.atom.Atom"><code class="xref py py-class docutils literal"><span class="pre">Atom</span></code></a>)
+table in place!</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="exatomic.molecule.compute_molecule_count">
+<code class="descclassname">exatomic.molecule.</code><code class="descname">compute_molecule_count</code><span class="sig-paren">(</span><em>universe</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/molecule.html#compute_molecule_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.molecule.compute_molecule_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="exatomic.molecule.compute_molecule_com">
+<code class="descclassname">exatomic.molecule.</code><code class="descname">compute_molecule_com</code><span class="sig-paren">(</span><em>universe</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/molecule.html#compute_molecule_com"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.molecule.compute_molecule_com" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute molecules&#8217; centers of mass.</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="orbital_tables.html" class="btn btn-neutral float-right" title="Atomic Field" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="basic_tables.html" class="btn btn-neutral" title="Frame Data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Tom Duignan, Alex Marchenko.
+      Last updated on Mar 31, 2017.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.3.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

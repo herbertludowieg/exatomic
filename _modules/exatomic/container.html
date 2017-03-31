@@ -1,0 +1,503 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>exatomic.container &mdash; exatomic 0.3.8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="exatomic 0.3.8 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> exatomic
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">General Info</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Exatomic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/api.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributor Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/overview.html">Overview</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">exatomic</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>exatomic.container</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for exatomic.container</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># Copyright (c) 2015-2016, Exa Analytics Development Team</span>
+<span class="c1"># Distributed under the terms of the Apache License 2.0</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The Atomic Universe</span>
+<span class="sd">#########################</span>
+<span class="sd">The :class:`~exatomic.container.Universe` object is a subclass of</span>
+<span class="sd">:class:`~exa.container.Container` that stores data coming from computational</span>
+<span class="sd">chemistry experiments in a unified and systematic way. Data is organized into</span>
+<span class="sd">&quot;frames&quot;. A frame is an axis that can represent time (e.g. molecular dynamics</span>
+<span class="sd">simulations), step number (e.g. geometry optimization), or an arbitrary index</span>
+<span class="sd">(e.g. density functional theory exchange correlation functional).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">six</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">exa.core.base</span> <span class="k">import</span> <span class="n">DataObject</span>
+    <span class="kn">from</span> <span class="nn">exa.core.numerical</span> <span class="k">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">DataFrame</span>
+    <span class="kn">from</span> <span class="nn">exa.core.container</span> <span class="k">import</span> <span class="n">Container</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">exa.container</span> <span class="k">import</span> <span class="n">TypedMeta</span> <span class="k">as</span> <span class="n">DataObject</span>
+    <span class="kn">from</span> <span class="nn">exa.numerical</span> <span class="k">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">DataFrame</span>
+    <span class="kn">from</span> <span class="nn">exa.container</span> <span class="k">import</span> <span class="n">Container</span>
+<span class="kn">from</span> <span class="nn">exatomic.error</span> <span class="k">import</span> <span class="n">BasisSetNotFoundError</span>
+<span class="kn">from</span> <span class="nn">exatomic.frame</span> <span class="k">import</span> <span class="n">Frame</span><span class="p">,</span> <span class="n">compute_frame_from_atom</span>
+<span class="kn">from</span> <span class="nn">exatomic.atom</span> <span class="k">import</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">UnitAtom</span><span class="p">,</span> <span class="n">ProjectedAtom</span><span class="p">,</span> <span class="n">VisualAtom</span><span class="p">,</span> <span class="n">Frequency</span>
+<span class="kn">from</span> <span class="nn">exatomic.two</span> <span class="k">import</span> <span class="p">(</span><span class="n">AtomTwo</span><span class="p">,</span> <span class="n">MoleculeTwo</span><span class="p">,</span> <span class="n">compute_atom_two</span><span class="p">,</span>
+                          <span class="n">compute_bond_count</span><span class="p">,</span> <span class="n">compute_molecule_two</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">exatomic.molecule</span> <span class="k">import</span> <span class="p">(</span><span class="n">Molecule</span><span class="p">,</span> <span class="n">compute_molecule</span><span class="p">,</span> <span class="n">compute_molecule_com</span><span class="p">,</span>
+                               <span class="n">compute_molecule_count</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">exatomic.widget</span> <span class="k">import</span> <span class="n">UniverseWidget</span>
+<span class="kn">from</span> <span class="nn">exatomic.field</span> <span class="k">import</span> <span class="n">AtomicField</span>
+<span class="kn">from</span> <span class="nn">exatomic.orbital</span> <span class="k">import</span> <span class="n">Orbital</span><span class="p">,</span> <span class="n">Excitation</span><span class="p">,</span> <span class="n">MOMatrix</span><span class="p">,</span> <span class="n">DensityMatrix</span>
+<span class="kn">from</span> <span class="nn">exatomic.basis</span> <span class="k">import</span> <span class="n">Overlap</span><span class="p">,</span> <span class="n">BasisSet</span><span class="p">,</span> <span class="n">BasisSetOrder</span>
+<span class="kn">from</span> <span class="nn">exatomic.algorithms.orbital</span> <span class="k">import</span> <span class="n">add_molecular_orbitals</span>
+<span class="kn">from</span> <span class="nn">exatomic.interfaces.cclib</span> <span class="k">import</span> <span class="n">universe_from_cclib</span>
+
+
+<div class="viewcode-block" id="Meta"><a class="viewcode-back" href="../../api/base.html#exatomic.container.Meta">[docs]</a><span class="k">class</span> <span class="nc">Meta</span><span class="p">(</span><span class="n">DataObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Defines strongly typed attributes of the :class:`~exatomic.universe.Universe`</span>
+<span class="sd">    and :class:`~exatomic.editor.AtomicEditor` objects. All &quot;aliases&quot; below are</span>
+<span class="sd">    in fact type definitions that get dynamically generated on package load</span>
+<span class="sd">    for :class:`~exatomic.container.Universe` and :class:`~exatomic.editor.Editor`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">atom</span> <span class="o">=</span> <span class="n">Atom</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">Frame</span>
+    <span class="n">atom_two</span> <span class="o">=</span> <span class="n">AtomTwo</span>
+    <span class="n">unit_atom</span> <span class="o">=</span> <span class="n">UnitAtom</span>
+    <span class="n">projected_atom</span> <span class="o">=</span> <span class="n">ProjectedAtom</span>
+    <span class="n">visual_atom</span> <span class="o">=</span> <span class="n">VisualAtom</span>
+    <span class="n">frequency</span> <span class="o">=</span> <span class="n">Frequency</span>
+    <span class="n">molecule</span> <span class="o">=</span> <span class="n">Molecule</span>
+    <span class="n">molecule_two</span> <span class="o">=</span> <span class="n">MoleculeTwo</span>
+    <span class="n">field</span> <span class="o">=</span> <span class="n">AtomicField</span>
+    <span class="n">orbital</span> <span class="o">=</span> <span class="n">Orbital</span>
+    <span class="n">overlap</span> <span class="o">=</span> <span class="n">Overlap</span>
+    <span class="n">multipole</span> <span class="o">=</span> <span class="n">DataFrame</span>
+    <span class="n">momatrix</span> <span class="o">=</span> <span class="n">MOMatrix</span>
+    <span class="n">excitation</span> <span class="o">=</span> <span class="n">Excitation</span>
+    <span class="n">density</span> <span class="o">=</span> <span class="n">DensityMatrix</span>
+    <span class="n">contribution</span> <span class="o">=</span> <span class="n">DataFrame</span>
+    <span class="n">basis_set_order</span> <span class="o">=</span> <span class="n">BasisSetOrder</span>
+    <span class="n">basis_set</span> <span class="o">=</span> <span class="n">BasisSet</span></div>
+
+<div class="viewcode-block" id="Universe"><a class="viewcode-back" href="../../api/base.html#exatomic.container.Universe">[docs]</a><span class="k">class</span> <span class="nc">Universe</span><span class="p">(</span><span class="n">Container</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">Meta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The atomic container is called a universe because it represents everything</span>
+<span class="sd">    known about the atomistic simulation (whether quantum or classical). This</span>
+<span class="sd">    includes data such as atomic coordinates, molecular orbital energies, as</span>
+<span class="sd">    well as (classical phenomena) such as two body distances, etc.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        atom (:class:`~exatomic.atom.Atom`): Atomic coordinates, symbols, forces, etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_widget_class</span> <span class="o">=</span> <span class="n">UniverseWidget</span>
+    <span class="n">_cardinal</span> <span class="o">=</span> <span class="s1">&#39;frame&#39;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_cclib</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ccobj</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">universe_from_cclib</span><span class="p">(</span><span class="n">ccobj</span><span class="p">))</span>
+
+    <span class="c1"># Note that compute_* function may be called automatically by typed</span>
+    <span class="c1"># properties defined in UniverseMeta</span>
+<div class="viewcode-block" id="Universe.compute_frame"><a class="viewcode-back" href="../../api/base.html#exatomic.container.Universe.compute_frame">[docs]</a>    <span class="k">def</span> <span class="nf">compute_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute a minmal frame table.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">compute_frame_from_atom</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Universe.compute_unit_atom"><a class="viewcode-back" href="../../api/base.html#exatomic.container.Universe.compute_unit_atom">[docs]</a>    <span class="k">def</span> <span class="nf">compute_unit_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compute minimal image for periodic systems.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unit_atom</span> <span class="o">=</span> <span class="n">UnitAtom</span><span class="o">.</span><span class="n">from_universe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">compute_visual_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visual_atom</span> <span class="o">=</span> <span class="n">VisualAtom</span><span class="o">.</span><span class="n">from_universe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute_molecule_com</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Universe.compute_atom_two"><a class="viewcode-back" href="../../api/base.html#exatomic.container.Universe.compute_atom_two">[docs]</a>    <span class="k">def</span> <span class="nf">compute_atom_two</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bond_extra</span><span class="o">=</span><span class="mf">0.45</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute interatomic two body properties (e.g. bonds).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mapper (dict): Custom radii to use when determining bonds</span>
+<span class="sd">            bond_extra (float): Extra additive factor to use when determining bonds</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">is_periodic</span><span class="p">():</span>
+            <span class="n">atom_two</span><span class="p">,</span> <span class="n">projected_atom</span> <span class="o">=</span> <span class="n">compute_atom_two</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapper</span><span class="p">,</span> <span class="n">bond_extra</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">atom_two</span> <span class="o">=</span> <span class="n">atom_two</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">projected_atom</span> <span class="o">=</span> <span class="n">projected_atom</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">atom_two</span> <span class="o">=</span> <span class="n">compute_atom_two</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapper</span><span class="p">,</span> <span class="n">bond_extra</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traits_need_update</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Universe.compute_bonds"><a class="viewcode-back" href="../../api/base.html#exatomic.container.Universe.compute_bonds">[docs]</a>    <span class="k">def</span> <span class="nf">compute_bonds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bond_extra</span><span class="o">=</span><span class="mf">0.45</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates bonds (and molecules).</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            :func:`~exatomic.two.AtomTwo.compute_bonds`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_two</span><span class="o">.</span><span class="n">compute_bonds</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">],</span> <span class="n">mapper</span><span class="o">=</span><span class="n">mapper</span><span class="p">,</span> <span class="n">bond_extra</span><span class="o">=</span><span class="n">bond_extra</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute_molecule</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traits_need_update</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Universe.compute_bond_count"><a class="viewcode-back" href="../../api/base.html#exatomic.container.Universe.compute_bond_count">[docs]</a>    <span class="k">def</span> <span class="nf">compute_bond_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute bond counts and attach them to the :class:`~exatomic.atom.Atom` table.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom</span><span class="p">[</span><span class="s1">&#39;bond_count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compute_bond_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Universe.compute_molecule"><a class="viewcode-back" href="../../api/base.html#exatomic.container.Universe.compute_molecule">[docs]</a>    <span class="k">def</span> <span class="nf">compute_molecule</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compute the :class:`~exatomic.molecule.Molecule` table.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">molecule</span> <span class="o">=</span> <span class="n">compute_molecule</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute_molecule_count</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">compute_molecule_com</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">cz</span> <span class="o">=</span> <span class="n">compute_molecule_com</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">molecule</span><span class="p">[</span><span class="s1">&#39;cx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">molecule</span><span class="p">[</span><span class="s1">&#39;cy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">molecule</span><span class="p">[</span><span class="s1">&#39;cz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cz</span>
+
+<div class="viewcode-block" id="Universe.compute_atom_count"><a class="viewcode-back" href="../../api/base.html#exatomic.container.Universe.compute_atom_count">[docs]</a>    <span class="k">def</span> <span class="nf">compute_atom_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compute number of atoms per frame.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">[</span><span class="s1">&#39;atom_count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">cardinal_groupby</span><span class="p">()</span><span class="o">.</span><span class="n">size</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Universe.compute_molecule_count"><a class="viewcode-back" href="../../api/base.html#exatomic.container.Universe.compute_molecule_count">[docs]</a>    <span class="k">def</span> <span class="nf">compute_molecule_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compute number of molecules per frame.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">[</span><span class="s1">&#39;molecule_count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">compute_molecule_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Universe.compute_density"><a class="viewcode-back" href="../../api/base.html#exatomic.container.Universe.compute_density">[docs]</a>    <span class="k">def</span> <span class="nf">compute_density</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compute density from momatrix and occupation vector.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;occupation_vector&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Universe must have momatrix and occupation_vector attributes&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">density</span> <span class="o">=</span> <span class="n">DensityMatrix</span><span class="o">.</span><span class="n">from_momatrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">momatrix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">occupation_vector</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Universe.add_field"><a class="viewcode-back" href="../../api/base.html#exatomic.container.Universe.add_field">[docs]</a>    <span class="k">def</span> <span class="nf">add_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a field object to the universe.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traits_need_update</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">AtomicField</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;field&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="n">field</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_field_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">field_values</span> <span class="o">+</span> <span class="n">field</span><span class="o">.</span><span class="n">field_values</span>
+                <span class="n">newdx</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">field</span><span class="p">))</span>
+                <span class="n">field</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">newdx</span>
+                <span class="n">new_field</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="p">,</span> <span class="n">field</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="n">AtomicField</span><span class="p">(</span><span class="n">new_field</span><span class="p">,</span> <span class="n">field_values</span><span class="o">=</span><span class="n">new_field_values</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;field&#39;</span><span class="p">):</span>
+                <span class="n">fields</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+                <span class="n">fields</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">))</span>
+                <span class="n">fields_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">field</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">field_values</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="n">AtomicField</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">field_values</span><span class="o">=</span><span class="n">fields_values</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_field_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">field_values</span> <span class="o">+</span> <span class="p">[</span><span class="n">j</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">field</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">field_values</span><span class="p">]</span>
+                <span class="n">newdx</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="p">)</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">field_values</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">field</span><span class="p">]))</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">newdx</span><span class="p">):</span>
+                    <span class="n">field</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="n">new_field</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="p">]</span> <span class="o">+</span> <span class="n">field</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="n">AtomicField</span><span class="p">(</span><span class="n">new_field</span><span class="p">,</span> <span class="n">field_values</span><span class="o">=</span><span class="n">new_field_values</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;field must be an instance of exatomic.field.AtomicField or a list of them&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traits_need_update</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Universe.add_molecular_orbitals"><a class="viewcode-back" href="../../api/base.html#exatomic.container.Universe.add_molecular_orbitals">[docs]</a>    <span class="k">def</span> <span class="nf">add_molecular_orbitals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mocoefs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                               <span class="n">vector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds molecular orbitals to universe. field_params define the numerical</span>
+<span class="sd">        field and may be a tuple of (min, max, nsteps) or a series containing</span>
+<span class="sd">        all of the columns specified in the exatomic.field.AtomicField table.</span>
+
+<span class="sd">        Warning:</span>
+<span class="sd">            Removes any existing field attribute of the universe.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;momatrix&#39;</span><span class="p">,</span> <span class="s1">&#39;basis_set&#39;</span><span class="p">,</span> <span class="s1">&#39;basis_set_order&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;universe must have </span><span class="si">{}</span><span class="s2"> attribute.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
+        <span class="n">add_molecular_orbitals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_params</span><span class="o">=</span><span class="n">field_params</span><span class="p">,</span>
+                               <span class="n">mocoefs</span><span class="o">=</span><span class="n">mocoefs</span><span class="p">,</span> <span class="n">vector</span><span class="o">=</span><span class="n">vector</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">frame</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traits_need_update</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_custom_traits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build traits depending on multiple dataframes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">traits</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># Hack for now...</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_atom_two&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">[</span><span class="s1">&#39;atom_count&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">():</span>
+            <span class="n">mapper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom</span><span class="o">.</span><span class="n">get_atom_labels</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+            <span class="n">traits</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom_two</span><span class="o">.</span><span class="n">_bond_traits</span><span class="p">(</span><span class="n">mapper</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">traits</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="concat"><a class="viewcode-back" href="../../api/base.html#exatomic.container.concat">[docs]</a><span class="k">def</span> <span class="nf">concat</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">universes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Warning:</span>
+<span class="sd">        This function is not fully featured or tested yet!</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span> <span class="s1">&#39;meta&#39;</span><span class="p">:</span> <span class="n">meta</span><span class="p">}</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">universe</span> <span class="ow">in</span> <span class="n">universes</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">universe</span><span class="o">.</span><span class="n">_data</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">key</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">Field</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">field</span><span class="o">.</span><span class="n">field_values</span><span class="p">]</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">field_values</span><span class="o">=</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">Universe</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="basis_function_contributions"><a class="viewcode-back" href="../../api/base.html#exatomic.container.basis_function_contributions">[docs]</a><span class="k">def</span> <span class="nf">basis_function_contributions</span><span class="p">(</span><span class="n">universe</span><span class="p">,</span> <span class="n">mo</span><span class="p">,</span> <span class="n">mocoefs</span><span class="o">=</span><span class="s1">&#39;coef&#39;</span><span class="p">,</span>
+                                 <span class="n">tol</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">ao</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provided a universe with momatrix and basis_set_order attributes,</span>
+<span class="sd">    return the major basis function contributions of a particular</span>
+<span class="sd">    molecular orbital.</span>
+
+<span class="sd">    Args</span>
+<span class="sd">        universe (exatomic.container.Universe): a universe</span>
+<span class="sd">        mo (int): molecular orbital index</span>
+<span class="sd">        mocoefs (str): column of interest in universe.momatrix</span>
+<span class="sd">        tol (float): minimum value of coefficient by which to filter</span>
+<span class="sd">        frame (int): frame of the universe (default is zero)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">        together (pd.DataFrame): a join of momatrix and basis_set_order</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">small</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">momatrix</span><span class="o">.</span><span class="n">contributions</span><span class="p">(</span><span class="n">mo</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">frame</span><span class="p">)</span>
+    <span class="n">chis</span> <span class="o">=</span> <span class="n">small</span><span class="p">[</span><span class="s1">&#39;chi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">coefs</span> <span class="o">=</span> <span class="n">small</span><span class="p">[</span><span class="n">mocoefs</span><span class="p">]</span>
+    <span class="n">coefs</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">chis</span>
+    <span class="n">together</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">universe</span><span class="o">.</span><span class="n">basis_set_order</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="n">chis</span><span class="p">],</span> <span class="n">coefs</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ao</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">together</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;not clever enough for that.&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Tom Duignan, Alex Marchenko.
+      Last updated on Mar 31, 2017.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.3.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,634 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Atomic Editor &mdash; exatomic 0.3.8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="exatomic 0.3.8 documentation" href="../index.html"/>
+        <link rel="up" title="API" href="api.html"/>
+        <link rel="next" title="Frame Data" href="basic_tables.html"/>
+        <link rel="prev" title="Exatomic Configuration" href="configuration.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> exatomic
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">General Info</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Exatomic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Exatomic Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#exceptions">Exceptions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Atomic Editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#universe-notebook-widget">Universe Notebook Widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-atomic-universe">The Atomic Universe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simple-formula">Simple Formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_tables.html">Frame Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_tables.html#atomic-position-data">Atomic Position Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_tables.html#two-body-properties">Two Body Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_tables.html">Three Body Properties Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_tables.html#four-body-properties">Four Body Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_tables.html#molecule-table">Molecule Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orbital_tables.html">Atomic Field</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orbital_tables.html#basis-set-representations">Basis Set Representations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orbital_tables.html#orbital-dataframe">Orbital DataFrame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filetypes/xyz.html">XYZ File Editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filetypes/cube.html">Cube File Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/universe.html">Universe Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/app.html">Universe Visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/field.html">Atomic Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/ao.html">Atomic Orbitals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/harmonics.html">Solid Harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/gaussian.html">Gaussian Orbitals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/gtf.html">Gaussian Type Functions</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Contributor Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../dev/overview.html">Overview</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">exatomic</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="api.html">API</a> &raquo;</li>
+        
+      <li>Atomic Editor</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/base.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-exatomic.editor"></span><div class="section" id="atomic-editor">
+<h1>Atomic Editor<a class="headerlink" href="#atomic-editor" title="Permalink to this headline">¶</a></h1>
+<p>This module provides a text file editor that can be used to transform commonly
+found file formats directly into <a class="reference internal" href="#exatomic.container.Universe" title="exatomic.container.Universe"><code class="xref py py-class docutils literal"><span class="pre">Universe</span></code></a> objects.</p>
+<dl class="class">
+<dt id="exatomic.editor.Editor">
+<em class="property">class </em><code class="descclassname">exatomic.editor.</code><code class="descname">Editor</code><span class="sig-paren">(</span><em>path_stream_or_string</em>, <em>as_interned=False</em>, <em>nprint=30</em>, <em>name=None</em>, <em>description=None</em>, <em>meta=None</em>, <em>encoding=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/editor.html#Editor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.editor.Editor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base atomic editor class for converting between file formats and to (or
+from) <a class="reference internal" href="#exatomic.container.Universe" title="exatomic.container.Universe"><code class="xref py py-class docutils literal"><span class="pre">Universe</span></code></a> objects.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Functions defined in the editor that generate typed attributes (see
+below) should be names &#8220;parse_{data object name}&#8221;.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">For a list of typed attributes, see <a class="reference internal" href="#exatomic.container.Universe" title="exatomic.container.Universe"><code class="xref py py-class docutils literal"><span class="pre">Universe</span></code></a>.</p>
+</div>
+<dl class="method">
+<dt id="exatomic.editor.Editor.parse_frame">
+<code class="descname">parse_frame</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/editor.html#Editor.parse_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.editor.Editor.parse_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a minimal <a class="reference internal" href="basic_tables.html#exatomic.frame.Frame" title="exatomic.frame.Frame"><code class="xref py py-class docutils literal"><span class="pre">Frame</span></code></a> from the (parsed)
+<a class="reference internal" href="basic_tables.html#exatomic.atom.Atom" title="exatomic.atom.Atom"><code class="xref py py-class docutils literal"><span class="pre">Atom</span></code></a> object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.editor.Editor.to_universe">
+<code class="descname">to_universe</code><span class="sig-paren">(</span><em>name=None</em>, <em>description=None</em>, <em>meta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/editor.html#Editor.to_universe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.editor.Editor.to_universe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the editor to a <a class="reference internal" href="#exatomic.container.Universe" title="exatomic.container.Universe"><code class="xref py py-class docutils literal"><span class="pre">Universe</span></code></a> object.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<span class="target" id="module-exatomic.widget"></span><div class="section" id="universe-notebook-widget">
+<h1>Universe Notebook Widget<a class="headerlink" href="#universe-notebook-widget" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="exatomic.widget.UniverseWidget">
+<em class="property">class </em><code class="descclassname">exatomic.widget.</code><code class="descname">UniverseWidget</code><span class="sig-paren">(</span><em>container</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/widget.html#UniverseWidget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.widget.UniverseWidget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom widget for the <code class="xref py py-class docutils literal"><span class="pre">Universe</span></code> data container.</p>
+</dd></dl>
+
+</div>
+<span class="target" id="module-exatomic.container"></span><div class="section" id="the-atomic-universe">
+<h1>The Atomic Universe<a class="headerlink" href="#the-atomic-universe" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#exatomic.container.Universe" title="exatomic.container.Universe"><code class="xref py py-class docutils literal"><span class="pre">Universe</span></code></a> object is a subclass of
+<a class="reference external" href="http://exa.readthedocs.io/en/latest/api/base_api.html#exa.container.Container" title="(in exa v0.2)"><code class="xref py py-class docutils literal"><span class="pre">Container</span></code></a> that stores data coming from computational
+chemistry experiments in a unified and systematic way. Data is organized into
+&#8220;frames&#8221;. A frame is an axis that can represent time (e.g. molecular dynamics
+simulations), step number (e.g. geometry optimization), or an arbitrary index
+(e.g. density functional theory exchange correlation functional).</p>
+<dl class="class">
+<dt id="exatomic.container.Meta">
+<em class="property">class </em><code class="descclassname">exatomic.container.</code><code class="descname">Meta</code><a class="reference internal" href="../_modules/exatomic/container.html#Meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.container.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines strongly typed attributes of the <code class="xref py py-class docutils literal"><span class="pre">Universe</span></code>
+and <code class="xref py py-class docutils literal"><span class="pre">AtomicEditor</span></code> objects. All &#8220;aliases&#8221; below are
+in fact type definitions that get dynamically generated on package load
+for <a class="reference internal" href="#exatomic.container.Universe" title="exatomic.container.Universe"><code class="xref py py-class docutils literal"><span class="pre">Universe</span></code></a> and <a class="reference internal" href="#exatomic.editor.Editor" title="exatomic.editor.Editor"><code class="xref py py-class docutils literal"><span class="pre">Editor</span></code></a>.</p>
+<dl class="attribute">
+<dt id="exatomic.container.Meta.atom">
+<code class="descname">atom</code><a class="headerlink" href="#exatomic.container.Meta.atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">Atom</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.frame">
+<code class="descname">frame</code><a class="headerlink" href="#exatomic.container.Meta.frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">Frame</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.atom_two">
+<code class="descname">atom_two</code><a class="headerlink" href="#exatomic.container.Meta.atom_two" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">AtomTwo</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.unit_atom">
+<code class="descname">unit_atom</code><a class="headerlink" href="#exatomic.container.Meta.unit_atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">UnitAtom</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.projected_atom">
+<code class="descname">projected_atom</code><a class="headerlink" href="#exatomic.container.Meta.projected_atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">ProjectedAtom</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.visual_atom">
+<code class="descname">visual_atom</code><a class="headerlink" href="#exatomic.container.Meta.visual_atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">VisualAtom</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.frequency">
+<code class="descname">frequency</code><a class="headerlink" href="#exatomic.container.Meta.frequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">Frequency</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.molecule">
+<code class="descname">molecule</code><a class="headerlink" href="#exatomic.container.Meta.molecule" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">Molecule</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.molecule_two">
+<code class="descname">molecule_two</code><a class="headerlink" href="#exatomic.container.Meta.molecule_two" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">MoleculeTwo</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.field">
+<code class="descname">field</code><a class="headerlink" href="#exatomic.container.Meta.field" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">AtomicField</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.orbital">
+<code class="descname">orbital</code><a class="headerlink" href="#exatomic.container.Meta.orbital" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">Orbital</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.overlap">
+<code class="descname">overlap</code><a class="headerlink" href="#exatomic.container.Meta.overlap" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">Overlap</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.multipole">
+<code class="descname">multipole</code><a class="headerlink" href="#exatomic.container.Meta.multipole" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">DataFrame</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.momatrix">
+<code class="descname">momatrix</code><a class="headerlink" href="#exatomic.container.Meta.momatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">MOMatrix</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.excitation">
+<code class="descname">excitation</code><a class="headerlink" href="#exatomic.container.Meta.excitation" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">Excitation</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.density">
+<code class="descname">density</code><a class="headerlink" href="#exatomic.container.Meta.density" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">DensityMatrix</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.contribution">
+<code class="descname">contribution</code><a class="headerlink" href="#exatomic.container.Meta.contribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">DataFrame</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="exatomic.container.Meta.basis_set_order">
+<code class="descname">basis_set_order</code><a class="headerlink" href="#exatomic.container.Meta.basis_set_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">BasisSetOrder</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="exatomic.container.Universe">
+<em class="property">class </em><code class="descclassname">exatomic.container.</code><code class="descname">Universe</code><span class="sig-paren">(</span><em>name=None</em>, <em>description=None</em>, <em>meta=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/container.html#Universe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.container.Universe" title="Permalink to this definition">¶</a></dt>
+<dd><p>The atomic container is called a universe because it represents everything
+known about the atomistic simulation (whether quantum or classical). This
+includes data such as atomic coordinates, molecular orbital energies, as
+well as (classical phenomena) such as two body distances, etc.</p>
+<dl class="attribute">
+<dt id="exatomic.container.Universe.atom">
+<code class="descname">atom</code><a class="headerlink" href="#exatomic.container.Universe.atom" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="basic_tables.html#exatomic.atom.Atom" title="exatomic.atom.Atom"><code class="xref py py-class docutils literal"><span class="pre">Atom</span></code></a> &#8211; Atomic coordinates, symbols, forces, etc.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.container.Universe.compute_frame">
+<code class="descname">compute_frame</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/container.html#Universe.compute_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.container.Universe.compute_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a minmal frame table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.container.Universe.compute_unit_atom">
+<code class="descname">compute_unit_atom</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/container.html#Universe.compute_unit_atom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.container.Universe.compute_unit_atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute minimal image for periodic systems.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.container.Universe.compute_atom_two">
+<code class="descname">compute_atom_two</code><span class="sig-paren">(</span><em>mapper=None</em>, <em>bond_extra=0.45</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/container.html#Universe.compute_atom_two"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.container.Universe.compute_atom_two" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute interatomic two body properties (e.g. bonds).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mapper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) &#8211; Custom radii to use when determining bonds</li>
+<li><strong>bond_extra</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) &#8211; Extra additive factor to use when determining bonds</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.container.Universe.compute_bonds">
+<code class="descname">compute_bonds</code><span class="sig-paren">(</span><em>mapper=None</em>, <em>bond_extra=0.45</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/container.html#Universe.compute_bonds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.container.Universe.compute_bonds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates bonds (and molecules).</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="basic_tables.html#exatomic.two.AtomTwo.compute_bonds" title="exatomic.two.AtomTwo.compute_bonds"><code class="xref py py-func docutils literal"><span class="pre">compute_bonds()</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.container.Universe.compute_bond_count">
+<code class="descname">compute_bond_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/container.html#Universe.compute_bond_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.container.Universe.compute_bond_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute bond counts and attach them to the <a class="reference internal" href="basic_tables.html#exatomic.atom.Atom" title="exatomic.atom.Atom"><code class="xref py py-class docutils literal"><span class="pre">Atom</span></code></a> table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.container.Universe.compute_molecule">
+<code class="descname">compute_molecule</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/container.html#Universe.compute_molecule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.container.Universe.compute_molecule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the <a class="reference internal" href="advanced_tables.html#exatomic.molecule.Molecule" title="exatomic.molecule.Molecule"><code class="xref py py-class docutils literal"><span class="pre">Molecule</span></code></a> table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.container.Universe.compute_atom_count">
+<code class="descname">compute_atom_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/container.html#Universe.compute_atom_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.container.Universe.compute_atom_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute number of atoms per frame.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.container.Universe.compute_molecule_count">
+<code class="descname">compute_molecule_count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/container.html#Universe.compute_molecule_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.container.Universe.compute_molecule_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute number of molecules per frame.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.container.Universe.compute_density">
+<code class="descname">compute_density</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/container.html#Universe.compute_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.container.Universe.compute_density" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute density from momatrix and occupation vector.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.container.Universe.add_field">
+<code class="descname">add_field</code><span class="sig-paren">(</span><em>field</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/container.html#Universe.add_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.container.Universe.add_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a field object to the universe.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.container.Universe.add_molecular_orbitals">
+<code class="descname">add_molecular_orbitals</code><span class="sig-paren">(</span><em>field_params=None</em>, <em>mocoefs=None</em>, <em>vector=None</em>, <em>frame=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/container.html#Universe.add_molecular_orbitals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.container.Universe.add_molecular_orbitals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds molecular orbitals to universe. field_params define the numerical
+field and may be a tuple of (min, max, nsteps) or a series containing
+all of the columns specified in the exatomic.field.AtomicField table.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Removes any existing field attribute of the universe.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="exatomic.container.concat">
+<code class="descclassname">exatomic.container.</code><code class="descname">concat</code><span class="sig-paren">(</span><em>name=None</em>, <em>description=None</em>, <em>meta=None</em>, <em>*universes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/container.html#concat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.container.concat" title="Permalink to this definition">¶</a></dt>
+<dd><div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This function is not fully featured or tested yet!</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="exatomic.container.basis_function_contributions">
+<code class="descclassname">exatomic.container.</code><code class="descname">basis_function_contributions</code><span class="sig-paren">(</span><em>universe</em>, <em>mo</em>, <em>mocoefs='coef'</em>, <em>tol=0.01</em>, <em>ao=None</em>, <em>frame=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/container.html#basis_function_contributions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.container.basis_function_contributions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provided a universe with momatrix and basis_set_order attributes,
+return the major basis function contributions of a particular
+molecular orbital.</p>
+<dl class="docutils">
+<dt>Args</dt>
+<dd>universe (exatomic.container.Universe): a universe
+mo (int): molecular orbital index
+mocoefs (str): column of interest in universe.momatrix
+tol (float): minimum value of coefficient by which to filter
+frame (int): frame of the universe (default is zero)</dd>
+<dt>Returns</dt>
+<dd>together (pd.DataFrame): a join of momatrix and basis_set_order</dd>
+</dl>
+</dd></dl>
+
+</div>
+<span class="target" id="module-exatomic.formula"></span><div class="section" id="simple-formula">
+<h1>Simple Formula<a class="headerlink" href="#simple-formula" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="exatomic.formula.SimpleFormula">
+<em class="property">class </em><code class="descclassname">exatomic.formula.</code><code class="descname">SimpleFormula</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/formula.html#SimpleFormula"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.formula.SimpleFormula" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple way of storing a chemical formula that contains no structural
+information. Element symbols are in alphabetical order (e.g. &#8216;B&#8217;, &#8216;C&#8217;, &#8216;Cl&#8217;, &#8216;Uuo&#8217;)</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">water</span> <span class="o">=</span> <span class="n">SimpleFormula</span><span class="p">(</span><span class="s1">&#39;H(2)O(1)&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">naoh</span> <span class="o">=</span> <span class="n">SimpleFormula</span><span class="p">(</span><span class="s1">&#39;Na(1)O(1)H(1)&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">naoh</span>
+<span class="go">SimpleFormula(&#39;H(1)Na(1)O(1)&#39;)</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="exatomic.formula.SimpleFormula.mass">
+<code class="descname">mass</code><a class="headerlink" href="#exatomic.formula.SimpleFormula.mass" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Returns</em> &#8211; mass (float): Mass (in atomic units) of the associated formula</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.formula.SimpleFormula.as_string">
+<code class="descname">as_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/formula.html#SimpleFormula.as_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.formula.SimpleFormula.as_string" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>formula (str)</em> &#8211; String representation of the chemical formula.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="exatomic.formula.string_to_dict">
+<code class="descclassname">exatomic.formula.</code><code class="descname">string_to_dict</code><span class="sig-paren">(</span><em>formula</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/formula.html#string_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.formula.string_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert string formula to a dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>formula</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; String formula representation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>fdict (dict)</em> &#8211; Dictionary formula representation</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="exatomic.formula.dict_to_string">
+<code class="descclassname">exatomic.formula.</code><code class="descname">dict_to_string</code><span class="sig-paren">(</span><em>formula</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/formula.html#dict_to_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.formula.dict_to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a dictionary formula to a string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>formula</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) &#8211; Dictionary formula representation</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>fstr (str)</em> &#8211; String formula representation</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="basic_tables.html" class="btn btn-neutral float-right" title="Frame Data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="configuration.html" class="btn btn-neutral" title="Exatomic Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Tom Duignan, Alex Marchenko.
+      Last updated on Mar 31, 2017.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.3.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

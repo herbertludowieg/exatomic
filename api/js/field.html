@@ -1,0 +1,284 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Atomic Fields &mdash; exatomic 0.3.8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="exatomic 0.3.8 documentation" href="../../index.html"/>
+        <link rel="up" title="API" href="../api.html"/>
+        <link rel="next" title="Atomic Orbitals" href="ao.html"/>
+        <link rel="prev" title="Universe Visualization" href="app.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> exatomic
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">General Info</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Exatomic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../configuration.html">Exatomic Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration.html#exceptions">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../base.html">Atomic Editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../base.html#universe-notebook-widget">Universe Notebook Widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../base.html#the-atomic-universe">The Atomic Universe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../base.html#simple-formula">Simple Formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic_tables.html">Frame Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic_tables.html#atomic-position-data">Atomic Position Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic_tables.html#two-body-properties">Two Body Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_tables.html">Three Body Properties Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_tables.html#four-body-properties">Four Body Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_tables.html#molecule-table">Molecule Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orbital_tables.html">Atomic Field</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orbital_tables.html#basis-set-representations">Basis Set Representations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orbital_tables.html#orbital-dataframe">Orbital DataFrame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../filetypes/xyz.html">XYZ File Editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../filetypes/cube.html">Cube File Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="universe.html">Universe Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.html">Universe Visualization</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Atomic Fields</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#field-js">field.js</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#atomicfield">AtomicField</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ao.html">Atomic Orbitals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="harmonics.html">Solid Harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gaussian.html">Gaussian Orbitals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gtf.html">Gaussian Type Functions</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Contributor Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/overview.html">Overview</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">exatomic</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../api.html">API</a> &raquo;</li>
+        
+      <li>Atomic Fields</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/api/js/field.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="atomic-fields">
+<h1>Atomic Fields<a class="headerlink" href="#atomic-fields" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="field-js">
+<h2>field.js<a class="headerlink" href="#field-js" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="atomicfield">
+<h3>AtomicField<a class="headerlink" href="#atomicfield" title="Permalink to this headline">¶</a></h3>
+<p>JS repr. of .cube file field values and dimensions.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ao.html" class="btn btn-neutral float-right" title="Atomic Orbitals" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="app.html" class="btn btn-neutral" title="Universe Visualization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Tom Duignan, Alex Marchenko.
+      Last updated on Mar 31, 2017.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.3.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

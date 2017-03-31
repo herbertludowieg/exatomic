@@ -1,0 +1,428 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>exatomic.filetypes.cube &mdash; exatomic 0.3.8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="exatomic 0.3.8 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> exatomic
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">General Info</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview.html">Exatomic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/api.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributor Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../dev/overview.html">Overview</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">exatomic</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>exatomic.filetypes.cube</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for exatomic.filetypes.cube</h1><div class="highlight"><pre>
+<span></span> <span class="c1">#-*- coding: utf-8 -*-</span>
+<span class="c1"># Copyright (c) 2015-2016, Exa Analytics Development Team</span>
+<span class="c1"># Distributed under the terms of the Apache License 2.0</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Cube File Support</span>
+<span class="sd">##########################</span>
+<span class="sd">Cube files contain an atomic geometry and scalar field values corresponding to</span>
+<span class="sd">a physical quantity.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">StringIO</span>
+<span class="kn">from</span> <span class="nn">exa.numerical</span> <span class="k">import</span> <span class="n">Series</span>
+<span class="kn">from</span> <span class="nn">exa.relational.isotope</span> <span class="k">import</span> <span class="n">z_to_symbol</span><span class="p">,</span> <span class="n">symbol_to_z</span>
+<span class="kn">from</span> <span class="nn">exatomic.atom</span> <span class="k">import</span> <span class="n">Atom</span>
+<span class="kn">from</span> <span class="nn">exatomic.editor</span> <span class="k">import</span> <span class="n">Editor</span>
+<span class="kn">from</span> <span class="nn">exatomic.field</span> <span class="k">import</span> <span class="n">AtomicField</span>
+
+
+<div class="viewcode-block" id="Cube"><a class="viewcode-back" href="../../../api/filetypes/cube.html#exatomic.filetypes.cube.Cube">[docs]</a><span class="k">class</span> <span class="nc">Cube</span><span class="p">(</span><span class="n">Editor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An editor for handling cube files.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        cube = Cube(&#39;my.cube&#39;)</span>
+<span class="sd">        cube.atom                # Displays the atom dataframe</span>
+<span class="sd">        cube.field               # Displays the field dataframe</span>
+<span class="sd">        cube.field_values        # Displays the list of field values</span>
+<span class="sd">        uni = cube.to_universe() # Converts the cube file editor to a universe</span>
+<span class="sd">        uni                      # Renders the cube file</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">        Be sure your cube is in atomic units.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Cube.parse_atom"><a class="viewcode-back" href="../../../api/filetypes/cube.html#exatomic.filetypes.cube.Cube.parse_atom">[docs]</a>    <span class="k">def</span> <span class="nf">parse_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse the :class:`~exatomic.atom.Atom` object from the cube file in place.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lines</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_volume_data_start</span><span class="p">])),</span> <span class="n">delim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                         <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;nelectron&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">))</span>
+        <span class="k">del</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;nelectron&#39;</span><span class="p">]</span>
+        <span class="n">mapper</span> <span class="o">=</span> <span class="n">z_to_symbol</span><span class="p">()</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Z&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapper</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Z&#39;</span><span class="p">]</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nat</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atom</span> <span class="o">=</span> <span class="n">Atom</span><span class="p">(</span><span class="n">df</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Cube.parse_field"><a class="viewcode-back" href="../../../api/filetypes/cube.html#exatomic.filetypes.cube.Cube.parse_field">[docs]</a>    <span class="k">def</span> <span class="nf">parse_field</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse the scalar field into a trait aware object.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The :class:`~exatomic.field.AtomicField` object tracks both the</span>
+<span class="sd">            field data (i.e. information about the discretization and shape of</span>
+<span class="sd">            the field&#39;s spatial points) as well as the field values (at each of</span>
+<span class="sd">            those points in space).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lines</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_volume_data_start</span><span class="p">:])),</span>
+                           <span class="n">delim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">({</span><span class="s1">&#39;ox&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ox</span><span class="p">,</span> <span class="s1">&#39;oy&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oy</span><span class="p">,</span> <span class="s1">&#39;oz&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oz</span><span class="p">,</span>
+                        <span class="s1">&#39;nx&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nx</span><span class="p">,</span> <span class="s1">&#39;ny&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ny</span><span class="p">,</span> <span class="s1">&#39;nz&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nz</span><span class="p">,</span>
+                        <span class="s1">&#39;dxi&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dxi</span><span class="p">,</span> <span class="s1">&#39;dxj&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dxj</span><span class="p">,</span> <span class="s1">&#39;dxk&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dxk</span><span class="p">,</span>
+                        <span class="s1">&#39;dyi&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dyi</span><span class="p">,</span> <span class="s1">&#39;dyj&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dyj</span><span class="p">,</span> <span class="s1">&#39;dyk&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dyk</span><span class="p">,</span>
+                        <span class="s1">&#39;dzi&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dzi</span><span class="p">,</span> <span class="s1">&#39;dzj&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dzj</span><span class="p">,</span> <span class="s1">&#39;dzk&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dzk</span><span class="p">,</span>
+                        <span class="s1">&#39;frame&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="s1">&#39;field_type&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_type</span><span class="p">})</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;nx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;nx&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ny&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ny&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;nz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;nz&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ox&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ox&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;oy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;oy&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;oz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;oz&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dxi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dxi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dxj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dxj&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dxk&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dxk&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dyi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dyi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dyj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dyj&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dyk&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dyk&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dzi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dzi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dzj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dzj&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dzk&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dzk&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">)])]</span>
+        <span class="c1">#print(fields)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_field</span> <span class="o">=</span> <span class="n">AtomicField</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">field_values</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform some preliminary parsing so that future parsing of atoms, etc.</span>
+<span class="sd">        is easy. Also parse out metadata (comments).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">typs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+        <span class="n">nat</span><span class="p">,</span> <span class="n">ox</span><span class="p">,</span> <span class="n">oy</span><span class="p">,</span> <span class="n">oz</span> <span class="o">=</span> <span class="p">[</span><span class="n">typ</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">typ</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">typs</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())]</span>
+        <span class="n">nx</span><span class="p">,</span> <span class="n">dxi</span><span class="p">,</span> <span class="n">dxj</span><span class="p">,</span> <span class="n">dxk</span> <span class="o">=</span> <span class="p">[</span><span class="n">typ</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">typ</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">typs</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())]</span>
+        <span class="n">ny</span><span class="p">,</span> <span class="n">dyi</span><span class="p">,</span> <span class="n">dyj</span><span class="p">,</span> <span class="n">dyk</span> <span class="o">=</span> <span class="p">[</span><span class="n">typ</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">typ</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">typs</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())]</span>
+        <span class="n">nz</span><span class="p">,</span> <span class="n">dzi</span><span class="p">,</span> <span class="n">dzj</span><span class="p">,</span> <span class="n">dzk</span> <span class="o">=</span> <span class="p">[</span><span class="n">typ</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">typ</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">typs</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dxi</span> <span class="o">=</span> <span class="n">dxi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dxj</span> <span class="o">=</span> <span class="n">dxj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dxk</span> <span class="o">=</span> <span class="n">dxk</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dyi</span> <span class="o">=</span> <span class="n">dyi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dyj</span> <span class="o">=</span> <span class="n">dyj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dyk</span> <span class="o">=</span> <span class="n">dyk</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dzi</span> <span class="o">=</span> <span class="n">dzi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dzj</span> <span class="o">=</span> <span class="n">dzj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dzk</span> <span class="o">=</span> <span class="n">dzk</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nat</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">nat</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nx</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">nx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ny</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ny</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nz</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">nz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ox</span> <span class="o">=</span> <span class="n">ox</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oy</span> <span class="o">=</span> <span class="n">oy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oz</span> <span class="o">=</span> <span class="n">oz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_volume_data_start</span> <span class="o">=</span> <span class="mi">6</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;comments&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">field_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field_type</span> <span class="o">=</span> <span class="n">field_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="write_cube"><a class="viewcode-back" href="../../../api/filetypes/cube.html#exatomic.filetypes.cube.write_cube">[docs]</a><span class="k">def</span> <span class="nf">write_cube</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">universe</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a cube file or files from a given unvierse.</span>
+
+<span class="sd">    Only the path and universe are required; if no frame or field indices are</span>
+<span class="sd">    provided, this function will write all fields in the given universe. If</span>
+<span class="sd">    multiple frames are desired, pass a list of frame indices; the field</span>
+<span class="sd">    argument should then be a list of the same length with the corresponding</span>
+<span class="sd">    field indices or none (in which case the first field for each frame will be</span>
+<span class="sd">    written). If multple fields per frame (multiple) is desired, use a list</span>
+<span class="sd">    for frames as previously, but use a list of lists for fields where the</span>
+<span class="sd">    outer list has the same length as the frame argument list and each &quot;sublist&quot;</span>
+<span class="sd">    now contains the indices of the fields specific to that frame to be written.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path (str): Directory or file path</span>
+<span class="sd">        universe (:class:`~exatomic.universe.Universe`): Universe to pull data from</span>
+<span class="sd">        frame (list or int): If only a specific frame is needed</span>
+<span class="sd">        field (list or int): If only a specific field is needed</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        &quot;Indices&quot; in the above description always refer to dataframe index.</span>
+<span class="sd">        Also always writes in atomic units.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;frame=[], field=[[]]&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;frame=[], field=[]&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">field</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;frame=[], field=None&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">frame</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">field</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_write_first_field_of_each_frame</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">universe</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unsupported argument types (</span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">), see docstring.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">field</span><span class="p">)))</span></div>
+
+<span class="k">def</span> <span class="nf">_write_first_field_of_each_frame</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">universe</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes the first field of every frame of the universe in a given directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Started but not completed&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="s1">&#39;Path </span><span class="si">{}</span><span class="s1">, is not a directory or does not exist!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="n">framelist</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">index</span>
+    <span class="n">padding</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">framelist</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">framelist</span><span class="p">:</span>
+        <span class="n">atom</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">atom</span><span class="p">[(</span><span class="n">universe</span><span class="o">.</span><span class="n">atom</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">frame</span><span class="p">),</span> <span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">mapper</span> <span class="o">=</span> <span class="n">symbol_to_z</span><span class="p">()</span>
+        <span class="n">atom</span><span class="p">[</span><span class="s1">&#39;Z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapper</span><span class="p">)</span>
+        <span class="n">atom</span><span class="p">[</span><span class="s1">&#39;electrons&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">del</span> <span class="n">atom</span><span class="p">[</span><span class="s1">&#39;symbol&#39;</span><span class="p">]</span>
+        <span class="n">field_data</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">field</span><span class="p">[</span><span class="n">universe</span><span class="o">.</span><span class="n">field</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">frame</span><span class="p">]</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">field_data</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">fdata</span> <span class="o">=</span> <span class="n">field_data</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;ox&#39;</span><span class="p">,</span> <span class="s1">&#39;oy&#39;</span><span class="p">,</span> <span class="s1">&#39;oz&#39;</span><span class="p">,</span> <span class="s1">&#39;nx&#39;</span><span class="p">,</span> <span class="s1">&#39;ny&#39;</span><span class="p">,</span> <span class="s1">&#39;nz&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;xi&#39;</span><span class="p">,</span> <span class="s1">&#39;xj&#39;</span><span class="p">,</span> <span class="s1">&#39;xk&#39;</span><span class="p">,</span> <span class="s1">&#39;yi&#39;</span><span class="p">,</span> <span class="s1">&#39;yj&#39;</span><span class="p">,</span> <span class="s1">&#39;yk&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;zi&#39;</span><span class="p">,</span> <span class="s1">&#39;zj&#39;</span><span class="p">,</span> <span class="s1">&#39;zk&#39;</span><span class="p">]]</span>
+        <span class="n">ox</span><span class="p">,</span> <span class="n">oy</span><span class="p">,</span> <span class="n">oz</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">xj</span><span class="p">,</span> <span class="n">xk</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">yj</span><span class="p">,</span> <span class="n">yk</span><span class="p">,</span> <span class="n">zi</span><span class="p">,</span> <span class="n">zj</span><span class="p">,</span> <span class="n">zk</span> <span class="o">=</span> <span class="n">fdata</span>
+        <span class="n">nat</span> <span class="o">=</span> <span class="n">universe</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="n">frame</span><span class="p">,</span> <span class="s1">&#39;atom_count&#39;</span><span class="p">]</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="n">_reshape_to_cube</span><span class="p">(</span><span class="n">universe</span><span class="o">.</span><span class="n">field_values</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">mkp</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">padding</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.cube&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">universe</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;frame: </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frame</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nat</span><span class="p">,</span> <span class="n">ox</span><span class="p">,</span> <span class="n">oy</span><span class="p">,</span> <span class="n">oz</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">xj</span><span class="p">,</span> <span class="n">xk</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ny</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">yj</span><span class="p">,</span> <span class="n">yk</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nz</span><span class="p">,</span> <span class="n">zi</span><span class="p">,</span> <span class="n">zj</span><span class="p">,</span> <span class="n">zk</span><span class="p">))</span>
+            <span class="n">atom</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+            <span class="n">fiel</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_reshape_to_cube</span><span class="p">(</span><span class="n">field_values</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Tom Duignan, Alex Marchenko.
+      Last updated on Mar 31, 2017.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.3.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

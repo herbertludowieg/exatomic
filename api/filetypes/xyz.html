@@ -1,0 +1,332 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>XYZ File Editor &mdash; exatomic 0.3.8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="exatomic 0.3.8 documentation" href="../../index.html"/>
+        <link rel="up" title="API" href="../api.html"/>
+        <link rel="next" title="Cube File Support" href="cube.html"/>
+        <link rel="prev" title="Atomic Field" href="../orbital_tables.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> exatomic
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">General Info</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Exatomic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../configuration.html">Exatomic Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration.html#exceptions">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../base.html">Atomic Editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../base.html#universe-notebook-widget">Universe Notebook Widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../base.html#the-atomic-universe">The Atomic Universe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../base.html#simple-formula">Simple Formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic_tables.html">Frame Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic_tables.html#atomic-position-data">Atomic Position Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic_tables.html#two-body-properties">Two Body Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_tables.html">Three Body Properties Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_tables.html#four-body-properties">Four Body Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_tables.html#molecule-table">Molecule Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orbital_tables.html">Atomic Field</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orbital_tables.html#basis-set-representations">Basis Set Representations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orbital_tables.html#orbital-dataframe">Orbital DataFrame</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">XYZ File Editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cube.html">Cube File Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../js/universe.html">Universe Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../js/app.html">Universe Visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../js/field.html">Atomic Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../js/ao.html">Atomic Orbitals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../js/harmonics.html">Solid Harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../js/gaussian.html">Gaussian Orbitals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../js/gtf.html">Gaussian Type Functions</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Contributor Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/overview.html">Overview</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">exatomic</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../api.html">API</a> &raquo;</li>
+        
+      <li>XYZ File Editor</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/api/filetypes/xyz.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-exatomic.filetypes.xyz"></span><div class="section" id="xyz-file-editor">
+<h1>XYZ File Editor<a class="headerlink" href="#xyz-file-editor" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="exatomic.filetypes.xyz.XYZ">
+<em class="property">class </em><code class="descclassname">exatomic.filetypes.xyz.</code><code class="descname">XYZ</code><span class="sig-paren">(</span><em>path_stream_or_string</em>, <em>as_interned=False</em>, <em>nprint=30</em>, <em>name=None</em>, <em>description=None</em>, <em>meta=None</em>, <em>encoding=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/exatomic/filetypes/xyz.html#XYZ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.filetypes.xyz.XYZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>An editor for programmatically editing <a class="reference external" href="https://en.wikipedia.org/wiki/XYZ_file_format">xyz</a> files.</p>
+<dl class="method">
+<dt id="exatomic.filetypes.xyz.XYZ.parse_atom">
+<code class="descname">parse_atom</code><span class="sig-paren">(</span><em>unit='A'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/exatomic/filetypes/xyz.html#XYZ.parse_atom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.filetypes.xyz.XYZ.parse_atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the atom table from the current xyz file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; Default xyz unit of length is the Angstrom</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.filetypes.xyz.XYZ.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>path</em>, <em>trajectory=True</em>, <em>float_format='%    .8f'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/exatomic/filetypes/xyz.html#XYZ.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.filetypes.xyz.XYZ.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write an xyz file (or files) to disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; Directory or file path</li>
+<li><strong>trajectory</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) &#8211; Write xyz trajectory file (default) or individual</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>path (str)</em> &#8211; On success, return the directory or file path written</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="exatomic.filetypes.xyz.XYZ.from_universe">
+<em class="property">classmethod </em><code class="descname">from_universe</code><span class="sig-paren">(</span><em>universe</em>, <em>atom_table='atom'</em>, <em>float_format='%    .8f'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/exatomic/filetypes/xyz.html#XYZ.from_universe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.filetypes.xyz.XYZ.from_universe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an xyz file editor from a given universe. If the universe has
+more than one frame, creates an xyz trajectory format editor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>universe</strong> &#8211; The universe</li>
+<li><strong>atom_table</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; One of &#8216;atom&#8217;, &#8216;unit&#8217;, or &#8216;visual&#8217; corresponding to coordinates</li>
+<li><strong>float_format</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) &#8211; Floating point format (for writing)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cube.html" class="btn btn-neutral float-right" title="Cube File Support" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../orbital_tables.html" class="btn btn-neutral" title="Atomic Field" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Tom Duignan, Alex Marchenko.
+      Last updated on Mar 31, 2017.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.3.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

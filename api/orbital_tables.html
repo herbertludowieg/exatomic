@@ -1,0 +1,772 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Atomic Field &mdash; exatomic 0.3.8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="exatomic 0.3.8 documentation" href="../index.html"/>
+        <link rel="up" title="API" href="api.html"/>
+        <link rel="next" title="XYZ File Editor" href="filetypes/xyz.html"/>
+        <link rel="prev" title="Three Body Properties Table" href="advanced_tables.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> exatomic
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">General Info</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Exatomic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Exatomic Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html#exceptions">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html">Atomic Editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#universe-notebook-widget">Universe Notebook Widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#the-atomic-universe">The Atomic Universe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="base.html#simple-formula">Simple Formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_tables.html">Frame Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_tables.html#atomic-position-data">Atomic Position Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_tables.html#two-body-properties">Two Body Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_tables.html">Three Body Properties Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_tables.html#four-body-properties">Four Body Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_tables.html#molecule-table">Molecule Table</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Atomic Field</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basis-set-representations">Basis Set Representations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#orbital-dataframe">Orbital DataFrame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filetypes/xyz.html">XYZ File Editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filetypes/cube.html">Cube File Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/universe.html">Universe Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/app.html">Universe Visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/field.html">Atomic Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/ao.html">Atomic Orbitals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/harmonics.html">Solid Harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/gaussian.html">Gaussian Orbitals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="js/gtf.html">Gaussian Type Functions</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Contributor Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../dev/overview.html">Overview</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">exatomic</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="api.html">API</a> &raquo;</li>
+        
+      <li>Atomic Field</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/orbital_tables.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <span class="target" id="module-exatomic.field"></span><div class="section" id="atomic-field">
+<h1>Atomic Field<a class="headerlink" href="#atomic-field" title="Permalink to this headline">¶</a></h1>
+<p>Essentially a <a class="reference external" href="http://exa.readthedocs.io/en/latest/api/base_api.html#exa.numerical.Field3D" title="(in exa v0.2)"><code class="xref py py-class docutils literal"><span class="pre">Field3D</span></code></a> used for storing cube file data
+(see <a class="reference internal" href="filetypes/cube.html#module-exatomic.filetypes.cube" title="exatomic.filetypes.cube"><code class="xref py py-mod docutils literal"><span class="pre">cube</span></code></a>). Cube files values are written in a
+csv-like structure with the outer loop going over the x dimension, the middle
+loop going over the y dimension, and the inner loop going over the z dimension.</p>
+<dl class="class">
+<dt id="exatomic.field.AtomicField">
+<em class="property">class </em><code class="descclassname">exatomic.field.</code><code class="descname">AtomicField</code><span class="sig-paren">(</span><em>*args</em>, <em>field_values=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/field.html#AtomicField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.field.AtomicField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for storing exatomic cube data (scalar field of 3D space). Note that
+this class follows the pattern established by the <a class="reference external" href="http://paulbourke.net/dataformats/cube/">cube file format</a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Supports any shape &#8220;cube&#8221;.</p>
+</div>
+<dl class="method">
+<dt id="exatomic.field.AtomicField.compute_dv">
+<code class="descname">compute_dv</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/field.html#AtomicField.compute_dv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.field.AtomicField.compute_dv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the volume element for each field.</p>
+<p>Volume of a parallelpiped whose dimensions are <span class="math">\(\mathbf{a}\)</span>,
+<span class="math">\(\mathbf{b}\)</span>, <span class="math">\(\mathbf{c}\)</span> is given by:</p>
+<div class="math">
+\[v = \left|\mathbf{a}\cdot\left(\mathbf{b}\times\mathbf{c}\right)\right|\]</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.field.AtomicField.integrate">
+<code class="descname">integrate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/field.html#AtomicField.integrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.field.AtomicField.integrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that field values are normalized.</p>
+<p>Computes the integral of the field values. For normalized fields (e.g
+orbitals), the result should be 1.</p>
+<div class="math">
+\[\int\left|\phi_{i}\right|^{2}dV \equiv 1\]</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.field.AtomicField.rotate">
+<code class="descname">rotate</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>angle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/field.html#AtomicField.rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.field.AtomicField.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unitary transformation of the discrete field.</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="n">newfield</span> <span class="o">=</span> <span class="n">myfield</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Index of first field</li>
+<li><strong>b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) &#8211; Index of second field</li>
+<li><strong>angle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><em>list of floats</em>) &#8211; angle(s) of rotation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">rotated (<a class="reference internal" href="#exatomic.field.AtomicField" title="exatomic.field.AtomicField"><code class="xref py py-class docutils literal"><span class="pre">AtomicField</span></code></a>) &#8211; positive then negative linear combinations</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<span class="target" id="module-exatomic.basis"></span><div class="section" id="basis-set-representations">
+<h1>Basis Set Representations<a class="headerlink" href="#basis-set-representations" title="Permalink to this headline">¶</a></h1>
+<p>This module provides classes that support representations of various basis sets.
+There are a handful of basis sets in computational chemistry, the most common of
+which are Gaussian type functions, Slater type functions, and plane waves. The
+classes provided by this module support not only storage of basis set data, but
+also analytical and discrete manipulations of the basis set.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">For symbolic and discrete manipulations see <code class="xref py py-mod docutils literal"><span class="pre">basis</span></code>.</p>
+</div>
+<dl class="class">
+<dt id="exatomic.basis.GaussianBasisSet">
+<em class="property">class </em><code class="descclassname">exatomic.basis.</code><code class="descname">GaussianBasisSet</code><span class="sig-paren">(</span><em>*args</em>, <em>spherical=True</em>, <em>gaussian=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/basis.html#GaussianBasisSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.basis.GaussianBasisSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores information about a Gaussian type basis set.</p>
+<p>A Gaussian type basis set is described by primitive Gaussian functions <span class="math">\(f\left(x, y, z\right)\)</span>
+of the form:</p>
+<div class="math">
+\[\begin{split}r^{2} = \left(x - A_{x}\right)^{2} + \left(x - A_{y}\right)^{2} + \left(z - A_{z}\right)^{2} \\
+f\left(x, y, z\right) = \left(x - A_{x}\right)^{l}\left(x - A_{y}\right)^{m}\left(z - A_{z}\right)^{n}e^{-\alpha r^{2}}\end{split}\]</div>
+<p>Note that <span class="math">\(l\)</span>, <span class="math">\(m\)</span>, and <span class="math">\(n\)</span> are not quantum numbers but positive integers
+(including zero) whose sum defines the orbital angular momentum of the primitive function.
+Each primitive function is centered on a given atom with coordinates <span class="math">\(\left(A_{x}, A_{y}, A_{z}\right)\)</span>.
+A basis function in this basis set is a sum of one or more primitive functions:</p>
+<div class="math">
+\[g_{i}\left(x, y, z\right) = \sum_{j=1}^{N_{i}}c_{ij}f_{ij}\left(x, y, z\right)\]</div>
+<p>Each primitive function <span class="math">\(f_{ij}\)</span> is parametrically dependent on its associated atom&#8217;s
+nuclear coordinates and specific values of <span class="math">\(\alpha\)</span>, <span class="math">\(l\)</span>, <span class="math">\(m\)</span>, and <span class="math">\(n\)</span>.
+For convenience in data storage, each primitive function record contains its value of
+<span class="math">\(\alpha\)</span> and coefficient (typically called the contraction coefficient) <span class="math">\(c\)</span>.
+shell_function does not include degeneracy due to <span class="math">\(m_{l}\)</span> but separates exponents
+and coefficients that have the same angular momentum values.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="exatomic.basis.BasisSetOrder">
+<em class="property">class </em><code class="descclassname">exatomic.basis.</code><code class="descname">BasisSetOrder</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/basis.html#BasisSetOrder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.basis.BasisSetOrder" title="Permalink to this definition">¶</a></dt>
+<dd><p>BasisSetOrder uniquely determines the basis function ordering scheme for
+a given <code class="xref py py-class docutils literal"><span class="pre">Universe</span></code>. This table is provided to
+make transparent the characteristic ordering scheme of various quantum
+codes. Either (L, ml) or (l, m, n) must be provided to have access to
+orbital visualization functionality.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="14%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>center</td>
+<td>int</td>
+<td>atomic center</td>
+</tr>
+<tr class="row-odd"><td>L</td>
+<td>int</td>
+<td>orbital angular momentum</td>
+</tr>
+<tr class="row-even"><td>shell</td>
+<td>int</td>
+<td>group of primitives</td>
+</tr>
+<tr class="row-odd"><td>ml</td>
+<td>int</td>
+<td>magnetic quantum number</td>
+</tr>
+<tr class="row-even"><td>l</td>
+<td>int</td>
+<td>power in x</td>
+</tr>
+<tr class="row-odd"><td>m</td>
+<td>int</td>
+<td>power in y</td>
+</tr>
+<tr class="row-even"><td>n</td>
+<td>int</td>
+<td>power in z</td>
+</tr>
+<tr class="row-odd"><td>r</td>
+<td>int</td>
+<td>power in r (optional - for STOs)</td>
+</tr>
+<tr class="row-even"><td>prefac</td>
+<td>float</td>
+<td>prefactor (optional - for STOs)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="exatomic.basis.Overlap">
+<em class="property">class </em><code class="descclassname">exatomic.basis.</code><code class="descname">Overlap</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/basis.html#Overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.basis.Overlap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overlap enumerates the overlap matrix elements between basis functions in
+a contracted basis set. Currently nothing disambiguates between the
+primitive overlap matrix and the contracted overlap matrix. As it is
+square symmetric, only n_basis_functions * (n_basis_functions + 1) / 2
+rows are stored.</p>
+<p>See Gramian matrix for more on the general properties of the overlap matrix.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="14%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>frame</td>
+<td>int/cat</td>
+<td>non-unique integer</td>
+</tr>
+<tr class="row-odd"><td>chi0</td>
+<td>int</td>
+<td>first basis function</td>
+</tr>
+<tr class="row-even"><td>chi1</td>
+<td>int</td>
+<td>second basis function</td>
+</tr>
+<tr class="row-odd"><td>coef</td>
+<td>float</td>
+<td>overlap matrix element</td>
+</tr>
+</tbody>
+</table>
+<dl class="classmethod">
+<dt id="exatomic.basis.Overlap.from_column">
+<em class="property">classmethod </em><code class="descname">from_column</code><span class="sig-paren">(</span><em>source</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/basis.html#Overlap.from_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.basis.Overlap.from_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an Overlap from a file with just the array of coefficients or
+an array of the values directly.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<span class="target" id="module-exatomic.orbital"></span><div class="section" id="orbital-dataframe">
+<h1>Orbital DataFrame<a class="headerlink" href="#orbital-dataframe" title="Permalink to this headline">¶</a></h1>
+<p>Orbital information. All of the dataframe structures and functions associated
+with the results of a quantum chemical calculation. The Orbital table itself
+summarizes information such as centers and energies. The Excitation table
+collects information about orbital excitations from time-dependent calculations.
+The convolve() bound method can be used to generate photoelectron spectroscopy
+and absorbance spectra.
+The MOMatrix table contains a C matrix as it is presented in quantum textbooks,
+stored in a columnar format. The bound method square() returns the
+matrix as one would write it out. This table should have dimensions
+N_basis_functions * N_basis_functions. The DensityMatrix table stores
+a triangular matrix in columnar format and contains a similar square()
+method to return the matrix as we see it on a piece of paper.</p>
+<dl class="class">
+<dt id="exatomic.orbital.Orbital">
+<em class="property">class </em><code class="descclassname">exatomic.orbital.</code><code class="descname">Orbital</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/orbital.html#Orbital"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.orbital.Orbital" title="Permalink to this definition">¶</a></dt>
+<dd><table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="14%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>frame</td>
+<td>category</td>
+<td>non-unique integer (req.)</td>
+</tr>
+<tr class="row-odd"><td>group</td>
+<td>category</td>
+<td>like frame but for same geometry</td>
+</tr>
+<tr class="row-even"><td>orbital</td>
+<td>int</td>
+<td>vector of MO coefficient matrix</td>
+</tr>
+<tr class="row-odd"><td>label</td>
+<td>int</td>
+<td>label of orbital</td>
+</tr>
+<tr class="row-even"><td>occupation</td>
+<td>float</td>
+<td>population of orbital</td>
+</tr>
+<tr class="row-odd"><td>energy</td>
+<td>float</td>
+<td>eigenvalue of orbital eigenvector</td>
+</tr>
+<tr class="row-even"><td>symmetry</td>
+<td>str</td>
+<td>symmetry designation (if applicable)</td>
+</tr>
+<tr class="row-odd"><td>x</td>
+<td>float</td>
+<td>orbital center in x</td>
+</tr>
+<tr class="row-even"><td>y</td>
+<td>float</td>
+<td>orbital center in y</td>
+</tr>
+<tr class="row-odd"><td>z</td>
+<td>float</td>
+<td>orbital center in z</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Spin zero means alpha spin or unknown and spin one means beta spin.</p>
+</div>
+<dl class="method">
+<dt id="exatomic.orbital.Orbital.get_orbital">
+<code class="descname">get_orbital</code><span class="sig-paren">(</span><em>orb=-1</em>, <em>spin=0</em>, <em>index=None</em>, <em>group=None</em>, <em>frame=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/orbital.html#Orbital.get_orbital"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.orbital.Orbital.get_orbital" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a specific orbital.</p>
+<dl class="docutils">
+<dt>Args</dt>
+<dd>orb (int): See note below (default HOMO)
+spin (int): 0, no spin or alpha (default); 1, beta
+index (int): Orbital dataframe index (default None)
+frame (int): The frame of the universe (default max(frame))
+group (int): The group of orbitals within a given frame</dd>
+<dt>Returns</dt>
+<dd>orbital (exatomic.orbital.Orbital): Orbital row</dd>
+<dt>Note</dt>
+<dd>If the index is not known (usually), but a criterion
+such as (HOMO or LUMO) is desired, use the <em>orb</em> and
+<em>spin</em> criteria. Negative <em>orb</em> values are occupied,
+positive are unoccupied. So -1 returns the HOMO, -2
+returns the HOMO-1; 0 returns the LUMO, 1 returns the
+LUMO+1, etc.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="exatomic.orbital.Excitation">
+<em class="property">class </em><code class="descclassname">exatomic.orbital.</code><code class="descname">Excitation</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/orbital.html#Excitation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.orbital.Excitation" title="Permalink to this definition">¶</a></dt>
+<dd><table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="14%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>energy</td>
+<td>float</td>
+<td>excitation energy in Ha</td>
+</tr>
+<tr class="row-odd"><td>irrep</td>
+<td>str</td>
+<td>irreducible representation of excitation</td>
+</tr>
+<tr class="row-even"><td>osc</td>
+<td>float</td>
+<td>oscillator strength (length repr.)</td>
+</tr>
+<tr class="row-odd"><td>occ</td>
+<td>int</td>
+<td>occupied orbital of excitation</td>
+</tr>
+<tr class="row-even"><td>virt</td>
+<td>int</td>
+<td>virtual orbital of excitation</td>
+</tr>
+<tr class="row-odd"><td>occsym</td>
+<td>str</td>
+<td>occupied orbital symmetry</td>
+</tr>
+<tr class="row-even"><td>virtsym</td>
+<td>str</td>
+<td>virtual orbital symmetry</td>
+</tr>
+<tr class="row-odd"><td>frame</td>
+<td>int</td>
+<td>non-unique integer (req.)</td>
+</tr>
+<tr class="row-even"><td>group</td>
+<td>int</td>
+<td>like frame but for same geometry</td>
+</tr>
+</tbody>
+</table>
+<dl class="classmethod">
+<dt id="exatomic.orbital.Excitation.from_universe">
+<em class="property">classmethod </em><code class="descname">from_universe</code><span class="sig-paren">(</span><em>uni</em>, <em>initial=None</em>, <em>final=None</em>, <em>spin=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/orbital.html#Excitation.from_universe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.orbital.Excitation.from_universe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the zeroth order approximation to excitation energies
+via the transition dipole method (provided a universe contains
+an MOMatrix and dipole moment integrals already).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="exatomic.orbital.MOMatrix">
+<em class="property">class </em><code class="descclassname">exatomic.orbital.</code><code class="descname">MOMatrix</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/orbital.html#MOMatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.orbital.MOMatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>The MOMatrix is the result of solving a quantum mechanical eigenvalue
+problem in a finite basis set. Individual columns are eigenfunctions
+of the Fock matrix with eigenvalues corresponding to orbital energies.</p>
+<div class="math">
+\[C^{*}SC = 1\]</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="14%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>chi</td>
+<td>int</td>
+<td>row of MO coefficient matrix</td>
+</tr>
+<tr class="row-odd"><td>orbital</td>
+<td>int</td>
+<td>vector of MO coefficient matrix</td>
+</tr>
+<tr class="row-even"><td>coef</td>
+<td>float</td>
+<td>weight of basis_function in MO</td>
+</tr>
+<tr class="row-odd"><td>frame</td>
+<td>category</td>
+<td>non-unique integer (req.)</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="exatomic.orbital.MOMatrix.contributions">
+<code class="descname">contributions</code><span class="sig-paren">(</span><em>orbital</em>, <em>mocoefs='coef'</em>, <em>tol=0.01</em>, <em>frame=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/orbital.html#MOMatrix.contributions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.orbital.MOMatrix.contributions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a slice containing all non-negligible basis function
+contributions to a specific orbital.</p>
+<dl class="docutils">
+<dt>Args</dt>
+<dd>orbital (int): orbital index</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="exatomic.orbital.MOMatrix.square">
+<code class="descname">square</code><span class="sig-paren">(</span><em>frame=0</em>, <em>column='coef'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/orbital.html#MOMatrix.square"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.orbital.MOMatrix.square" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a square dataframe corresponding to the canonical C matrix
+representation.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="exatomic.orbital.DensityMatrix">
+<em class="property">class </em><code class="descclassname">exatomic.orbital.</code><code class="descname">DensityMatrix</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/orbital.html#DensityMatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.orbital.DensityMatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>The density matrix in a contracted basis set. As it is
+square symmetric, only n_basis_functions * (n_basis_functions + 1) / 2
+rows are stored.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="14%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Column</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>chi1</td>
+<td>int</td>
+<td>first basis function</td>
+</tr>
+<tr class="row-odd"><td>chi2</td>
+<td>int</td>
+<td>second basis function</td>
+</tr>
+<tr class="row-even"><td>coef</td>
+<td>float</td>
+<td>overlap matrix element</td>
+</tr>
+<tr class="row-odd"><td>frame</td>
+<td>category</td>
+<td>non-unique integer (req.)</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="exatomic.orbital.DensityMatrix.square">
+<code class="descname">square</code><span class="sig-paren">(</span><em>frame=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/orbital.html#DensityMatrix.square"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.orbital.DensityMatrix.square" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a square dataframe of the density matrix.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="exatomic.orbital.DensityMatrix.from_momatrix">
+<em class="property">classmethod </em><code class="descname">from_momatrix</code><span class="sig-paren">(</span><em>momatrix</em>, <em>occvec</em>, <em>column='coef'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/exatomic/orbital.html#DensityMatrix.from_momatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#exatomic.orbital.DensityMatrix.from_momatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>A density matrix can be constructed from an MOMatrix by:
+.. math:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">D_</span><span class="p">{</span><span class="n">uv</span><span class="p">}</span> <span class="o">=</span> \<span class="n">sum_</span><span class="p">{</span><span class="n">i</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">N</span><span class="p">}</span> <span class="n">C_</span><span class="p">{</span><span class="n">ui</span><span class="p">}</span> <span class="n">C_</span><span class="p">{</span><span class="n">vi</span><span class="p">}</span> <span class="n">n_</span><span class="p">{</span><span class="n">i</span><span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>momatrix</strong> (<a class="reference internal" href="#exatomic.orbital.MOMatrix" title="exatomic.orbital.MOMatrix"><code class="xref py py-class docutils literal"><span class="pre">MOMatrix</span></code></a>) &#8211; a C matrix</li>
+<li><strong>occvec</strong> (<code class="xref py py-class docutils literal"><span class="pre">array</span></code> or similar) &#8211; vector of len(C.shape[0])
+containing the occupations of each molecular orbital.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">ret (<a class="reference internal" href="#exatomic.orbital.DensityMatrix" title="exatomic.orbital.DensityMatrix"><code class="xref py py-class docutils literal"><span class="pre">DensityMatrix</span></code></a>) &#8211; The density matrix</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="filetypes/xyz.html" class="btn btn-neutral float-right" title="XYZ File Editor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="advanced_tables.html" class="btn btn-neutral" title="Three Body Properties Table" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Tom Duignan, Alex Marchenko.
+      Last updated on Mar 31, 2017.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.3.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

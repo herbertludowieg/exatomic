@@ -1,0 +1,303 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>exatomic.widget &mdash; exatomic 0.3.8 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="exatomic 0.3.8 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> exatomic
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">General Info</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Exatomic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/api.html">API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributor Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dev/overview.html">Overview</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">exatomic</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>exatomic.widget</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for exatomic.widget</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># Copyright (c) 2015-2016, Exa Analytics Development Team</span>
+<span class="c1"># Distributed under the terms of the Apache License 2.0</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Universe Notebook Widget</span>
+<span class="sd">#########################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">atexit</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">sep</span><span class="p">,</span> <span class="n">getcwd</span><span class="p">,</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">base64</span> <span class="k">import</span> <span class="n">b64decode</span>
+<span class="kn">from</span> <span class="nn">traitlets</span> <span class="k">import</span> <span class="n">Unicode</span>
+<span class="kn">from</span> <span class="nn">notebook.nbextensions</span> <span class="k">import</span> <span class="n">jupyter_data_dir</span>
+<span class="kn">from</span> <span class="nn">exa.widget</span> <span class="k">import</span> <span class="n">ContainerWidget</span><span class="p">,</span> <span class="n">install_notebook_widgets</span>
+<span class="kn">from</span> <span class="nn">exa.utility</span> <span class="k">import</span> <span class="n">mkp</span>
+<span class="kn">from</span> <span class="nn">exatomic._config</span> <span class="k">import</span> <span class="n">config</span><span class="p">,</span> <span class="n">del_update</span>
+
+
+<div class="viewcode-block" id="UniverseWidget"><a class="viewcode-back" href="../../api/base.html#exatomic.widget.UniverseWidget">[docs]</a><span class="k">class</span> <span class="nc">UniverseWidget</span><span class="p">(</span><span class="n">ContainerWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom widget for the :class:`~exatomic.universe.Universe` data container.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_view_module</span> <span class="o">=</span> <span class="n">Unicode</span><span class="p">(</span><span class="s2">&quot;nbextensions/exa/exatomic/universe&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">_view_name</span> <span class="o">=</span> <span class="n">Unicode</span><span class="p">(</span><span class="s1">&#39;UniverseView&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sync</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1">#    def _handle_field(self, data):</span>
+<span class="c1">#        values = pd.read_json(data.pop(&quot;values&quot;), typ=&quot;series&quot;)</span>
+<span class="c1">#        values.sort_index(inplace=True)</span>
+<span class="c1">#        field = pd.DataFrame.from_dict({key: [val] for key, val in data.items()})</span>
+<span class="c1">#        field[&quot;frame&quot;] = 0</span>
+<span class="c1">#        field[&quot;dxj&quot;] = field[&quot;dxk&quot;] = 0</span>
+<span class="c1">#        field[&quot;dyi&quot;] = field[&quot;dyk&quot;] = 0</span>
+<span class="c1">#        field[&quot;dzi&quot;] = field[&quot;dzj&quot;] = 0</span>
+<span class="c1">#        self.container.add_field(field, None, [values])</span>
+
+    <span class="k">def</span> <span class="nf">_handle_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">savedir</span> <span class="o">=</span> <span class="n">getcwd</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;save_dir&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">savedir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;save_dir&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;file_name&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">imgname</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nxt</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">lgfls</span> <span class="o">=</span> <span class="p">[</span><span class="n">fl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">fl</span> <span class="ow">in</span> <span class="n">glob</span><span class="p">(</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">savedir</span><span class="p">,</span> <span class="s2">&quot;*png&quot;</span><span class="p">]))]</span>
+                <span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">fl</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()])</span> <span class="k">for</span> <span class="n">fl</span> <span class="ow">in</span> <span class="n">lgfls</span><span class="p">]</span>
+                <span class="n">last</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">numbers</span> <span class="k">if</span> <span class="n">num</span><span class="p">])[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">nxt</span> <span class="o">=</span> <span class="n">last</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">imgname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:06d}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nxt</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">imgname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:06d}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nxt</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">savedir</span><span class="p">,</span> <span class="n">imgname</span><span class="p">])):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Automatic file name generation failed. Use uni._widget.params[&#39;file_name&#39;]&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">savedir</span><span class="p">,</span> <span class="n">imgname</span><span class="p">]),</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">b64decode</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;data:image/png;base64,&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)))</span>
+        <span class="c1"># TODO : this likely won&quot;t work on windows but SHOULD automatically</span>
+        <span class="c1">#        crop the image to minimize whitespace of the final image.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">crop</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;convert -trim&quot;</span><span class="p">,</span> <span class="n">imgname</span><span class="p">,</span> <span class="n">imgname</span><span class="p">])</span>
+            <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">crop</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">savedir</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;exatomic&#39;</span><span class="p">][</span><span class="s1">&#39;update&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;1&#39;</span><span class="p">:</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;log&#39;</span><span class="p">][</span><span class="s1">&#39;level&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;0&#39;</span> <span class="k">else</span> <span class="kc">False</span>
+    <span class="n">pkg_nbext</span> <span class="o">=</span> <span class="n">mkp</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;dynamic&#39;</span><span class="p">][</span><span class="s1">&#39;exatomic_pkgdir&#39;</span><span class="p">],</span> <span class="s2">&quot;_nbextension&quot;</span><span class="p">)</span>
+    <span class="n">sys_nbext</span> <span class="o">=</span> <span class="n">mkp</span><span class="p">(</span><span class="n">jupyter_data_dir</span><span class="p">(),</span> <span class="s2">&quot;nbextensions&quot;</span><span class="p">,</span> <span class="s2">&quot;exa&quot;</span><span class="p">,</span> <span class="s2">&quot;exatomic&quot;</span><span class="p">)</span>
+    <span class="n">install_notebook_widgets</span><span class="p">(</span><span class="n">pkg_nbext</span><span class="p">,</span> <span class="n">sys_nbext</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+    <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">del_update</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Tom Duignan, Alex Marchenko.
+      Last updated on Mar 31, 2017.
+
+    </p>
+  </div> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.3.8',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
