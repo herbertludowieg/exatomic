@@ -66,7 +66,7 @@ def func_log(func):
     return logging.getLogger(name)
 
 from ._version import __version__
-from . import core
-from .core import Universe, Editor, Atom, AtomicField, Frame, Tensor, add_tensor
-from .interfaces import XYZ, Cube
-from .widgets import DemoContainer, DemoUniverse, UniverseWidget, TensorContainer
+#from . import core
+#from .core import Universe, Editor, Atom, AtomicField, Frame, Tensor, add_tensor
+#from .interfaces import XYZ, Cube
+#from .widgets import DemoContainer, DemoUniverse, UniverseWidget, TensorContainer
