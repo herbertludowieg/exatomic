@@ -12,7 +12,7 @@ import six
 import csv
 import numpy as np
 import pandas as pd
-from exa import TypedMeta
+from exa.core.container import TypedMeta
 from exa.util.units import Length
 from exa.util.utility import mkp
 from exatomic.core.editor import Editor

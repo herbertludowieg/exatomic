@@ -9,8 +9,8 @@ found file formats directly into :class:`~exatomic.container.Universe` objects.
 """
 import six
 import pandas as pd
-from exa import Editor as _Editor
-from exa import TypedMeta
+from exa.core.editor import Editor as _Editor
+from exa.core.container import TypedMeta
 from .universe import Universe
 from .frame import compute_frame_from_atom
 

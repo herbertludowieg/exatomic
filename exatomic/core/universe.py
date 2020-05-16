@@ -14,7 +14,8 @@ simulations), step number (e.g. geometry optimization), or an arbitrary index
 import six
 import numpy as np
 import pandas as pd
-from exa import DataFrame, Container, TypedMeta
+from exa.core.numerical import DataFrame
+from exa.core.container import Container, TypedMeta
 from .frame import Frame, compute_frame_from_atom
 from .atom import Atom, UnitAtom, ProjectedAtom, VisualAtom, Frequency
 from .two import (AtomTwo, MoleculeTwo, compute_atom_two,

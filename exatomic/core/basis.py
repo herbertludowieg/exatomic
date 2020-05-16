@@ -18,7 +18,7 @@ import numpy as np
 import pandas as pd
 from io import StringIO
 
-from exa import DataFrame
+from exa.core.numerical import DataFrame
 from exatomic.algorithms.basis import cart_lml_count, spher_lml_count
 from exatomic.algorithms.numerical import _tri_indices, _square, Shell
 

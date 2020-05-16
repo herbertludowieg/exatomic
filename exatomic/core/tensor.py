@@ -2,7 +2,7 @@
 # Copyright (c) 2015-2018, Exa Analytics Development Team
 # Distributed under the terms of the Apache License 2.0
 
-from exa import DataFrame
+from exa.core.numerical import DataFrame
 import numpy as np
 import pandas as pd
 from exatomic import plotter

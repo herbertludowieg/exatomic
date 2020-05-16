@@ -31,7 +31,7 @@ import numpy as np
 import pandas as pd
 from IPython.display import display
 from ipywidgets import FloatProgress
-from exa import DataFrame
+from exa.core.numerical import DataFrame
 #from exa.util.units import Length
 from exatomic.base import sym2radius
 from exatomic.algorithms.distance import (pdist_ortho, pdist_ortho_nv, pdist,

@@ -10,7 +10,7 @@ import pandas as pd
 import networkx as nx
 import warnings
 from networkx.algorithms.components import connected_components
-from exa import DataFrame
+from exa.core.numerical import DataFrame
 from exatomic.base import sym2mass
 from exatomic.formula import string_to_dict, dict_to_string
 

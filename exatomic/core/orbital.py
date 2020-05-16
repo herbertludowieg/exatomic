@@ -23,7 +23,7 @@ from __future__ import print_function
 from __future__ import division
 import numpy as np
 import pandas as pd
-from exa import DataFrame
+from exa.core.numerical import DataFrame
 from exa.util.units import Energy
 from exatomic.algorithms.numerical import (density_from_momatrix,
                                            density_as_square)

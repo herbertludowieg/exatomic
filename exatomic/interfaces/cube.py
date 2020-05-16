@@ -12,7 +12,8 @@ import six
 import numpy as np
 import pandas as pd
 from glob import glob
-from exa import Series, TypedMeta
+from exa.core.numerical import Series
+from exa.core.container import TypedMeta
 from exatomic import __version__, Atom, Editor, AtomicField, Frame, Universe
 from exatomic.base import z2sym, sym2z
 

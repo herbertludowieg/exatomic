@@ -10,7 +10,7 @@ forces, velocities, symbols, etc. (all data associated with atoms as points).
 from numbers import Integral
 import numpy as np
 import pandas as pd
-from exa import DataFrame, Series
+from exa.core.numerical import DataFrame, Series
 from exa.util.units import Length
 from exatomic.base import sym2z, sym2mass
 from exatomic.algorithms.distance import modv
