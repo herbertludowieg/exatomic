@@ -14,7 +14,7 @@ import six
 import numpy as np
 import pandas as pd
 from collections import defaultdict
-from exa import TypedMeta
+from exa.core.container import TypedMeta
 from exa.util.units import Length, Energy
 from .editor import Editor
 from exatomic.base import z2sym

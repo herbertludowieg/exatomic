@@ -7,7 +7,7 @@ Gaussian Editor
 Base class on top of exatomic.Editor for Gaussian Editors
 """
 #import pandas as pd
-from exatomic import Editor
+from exatomic.core.editor import Editor
 
 class Editor(Editor):
 
