@@ -14,7 +14,12 @@ import pandas as pd
 from glob import glob
 from exa.core.numerical import Series
 from exa.core.container import TypedMeta
-from exatomic import __version__, Atom, Editor, AtomicField, Frame, Universe
+from exatomic import __version__
+from exatomic.core.atom import Atom
+from exatomic.core.editor import Editor
+from exatomic.core.field import AtomicField
+from exatomic.core.frame import Frame
+from exatomic.core.universe import Universe
 from exatomic.base import z2sym, sym2z
 
 class Meta(TypedMeta):
