@@ -135,7 +135,6 @@ def add_orb_ang_mom(uni, field_params=None, rcoefs=None, icoefs=None,
     orbocc = rcol if orbocc is None else orbocc
     if maxes is None:
         maxes = np.eye(3)
-        if verbose:
     occvec = uni.orbital[orbocc].values
     grx = uni.basis_functions.evaluate_diff(x, y, z, cart='x', verbose=verbose)
     gry = uni.basis_functions.evaluate_diff(x, y, z, cart='y', verbose=verbose)
