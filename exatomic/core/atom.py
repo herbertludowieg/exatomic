@@ -150,12 +150,16 @@ class Atom(DataFrame):
 
         # normalize rotation axis vector
         norm = np.linalg.norm(axis)
+        if isinstance(axis, list) or isinstance(axis, tuple):
+            axis = np.array(axis)
+        axis = axis.astype(float)
         try:
             axis /= norm
         except ZeroDivisionError:
             raise ZeroDivisionError("Trying to normalize axis {} by a 0 value".format(axis))
         # get the coordinates
         coords = frame[['x', 'y', 'z']].values
+        #print(coords)
         # generate the first term in rodrigues formula
         a = coords * np.cos(theta)
         # generate second term in rodrigures formula
@@ -166,6 +170,7 @@ class Atom(DataFrame):
         # and the axis vector
         c = np.outer(np.dot(coords, axis), axis) * (1-np.cos(theta))
         rotated = a + b + c
+        #print(rotated)
         frame[['x', 'y', 'z']] = rotated
         return Atom(frame)
 
@@ -220,18 +225,91 @@ class Atom(DataFrame):
         if frame is None: atom = self.last_frame.copy()
         else: atom = self[self.frame == frame].copy()
         cols = ['x', 'y', 'z']
+        # use the center method to center the molecule
+        centered = Atom(atom).center(adx0, frame=frame, to=center_to)
         # define the original vector
-        v0 = atom.iloc[adx1][cols].values.astype(np.float64) - atom.iloc[adx0][cols].values.astype(np.float64)
+        v0 = centered.iloc[adx1][cols].values.astype(np.float64) \
+                    - centered.iloc[adx0][cols].values.astype(np.float64)
         # get the vector to align with and normalize
         v1 = axis/np.linalg.norm(axis)
         # find the normal vector to rotate around
         n = np.cross(v0, v1)
         # find the angle to rotate the vector
         theta = np.arccos(np.dot(v0, v1) / (np.linalg.norm(v0)*np.linalg.norm(v1)))
-        # use the center method to center the molecule
-        centered = Atom(atom).center(adx0, frame=frame, to=center_to)
         # rotate the molecule around the normal vector
         aligned = centered.rotate(theta=theta, axis=n, degrees=False)
+        return Atom(aligned)
+
+    def align_to_plane(self, adx0, adx1, adx2, plane='xz', center_to=None, frame=None):
+        '''
+        Method to align a molecule along a given plane.
+
+        Note:
+            Only works for xy, xz, and yz planes.
+        '''
+        cols = ['x', 'y', 'z']
+        axis = []
+        for p in plane:
+            if p == 'x':
+                axis.append([1, 0, 0])
+            elif p == 'y':
+                axis.append([0, 1, 0])
+            elif p == 'z':
+                axis.append([0, 0, 1])
+            else:
+                test = "Sorry the specified axis value, {}, was not understood. The " \
+                       +"only values that are accepted are 'x', 'y', or 'z'."
+                raise ValueError(text.format(p))
+        # align the first two atoms along the axis from the first plane axis
+        # for the default this would be along the x axis
+        aligned = Atom(self).align_to_axis(adx0, adx1, axis[0])
+        # get the vectors that will span the plane after the alignment is done
+        v0 = aligned.loc[adx1, cols].values - aligned.loc[adx0, cols].values
+        v1 = aligned.loc[adx2, cols].values - aligned.loc[adx0, cols].values
+        # get the normal vector of the plane
+        norm0 = np.cross(v0.astype(np.float64), v1.astype(np.float64))
+        # get the normal vector of the plane to align to
+        norm1 = np.cross(*axis)
+        # get the the angle that must be rotated over
+        theta = np.arccos(np.dot(norm0, norm1) \
+                    / (np.linalg.norm(norm0)*np.linalg.norm(norm1)))
+        # need to determine which way to rotate as the formula to calculate the angle
+        # between two vectors carries no sign
+        # we do this by first getting the cross product between the vector from adx0 and adx2
+        # and the second axis that defines the plane to align to
+        tmp = np.cross(v1.astype(np.float64), axis[1])
+        # then we compare which way that vector points w.r.t. the axis that we aligned the
+        # vector from adx0 and adx1
+        tmp2 = np.dot(axis[0], tmp)
+        # if tmp2 is greater than 0 that means that they point in the same direction
+        # if tmp2 is less than 0 that means that they point in opposite directions
+        # if tmp2 is 0 then that should mean that the atoms are already on the plane
+        # to align to after aligning adx0 and adx1 along the first axis meaning that
+        # theta should be zero
+        if tmp2 > 0:
+            theta = theta
+        elif tmp2 < 0:
+            theta = -theta
+        elif tmp2 == 0 and theta < 1e-5:
+            pass
+        # this should never occur
+        else:
+            raise ValueError("Could not determing the sign that the rotation angle should " \
+                             +"assume, currently, {}, this should not happen.".format(tmp2))
+        #print(theta, norm0, norm1, np.dot(norm0, norm1), np.linalg.norm(norm0), np.linalg.norm(norm1))
+        #print(v0, v1, np.cross(v0.astype(np.float64), v1.astype(np.float64)))
+        # rotate the molecule accordingly
+        aligned = Atom(aligned).rotate(theta=theta, axis=axis[0],
+                                       degrees=False)
+        v0 = aligned.loc[adx1, cols].values \
+                    - aligned.loc[adx0, cols].values
+        v1 = aligned.loc[adx2, cols].values \
+                    - aligned.loc[adx0, cols].values
+        norm0 = np.cross(v0.astype(np.float64), v1.astype(np.float64))
+        theta = np.arccos(np.dot(norm0, norm1) \
+                    / (np.linalg.norm(norm0)*np.linalg.norm(norm1)))
+        #print(theta)
+        #print(v0, v1, np.cross(v0.astype(np.float64), v1.astype(np.float64)))
         return Atom(aligned)
 
     def to_xyz(self, tag='symbol', header=False, comments='', columns=None,
