@@ -242,20 +242,45 @@ class Atom(DataFrame):
 
     def align_to_plane(self, adx0, adx1, adx2, plane='xz', center_to=None, frame=None):
         '''
-        Method to align a molecule along a given plane.
+        Method to align a molecule along a given plane. It will align the
+        vector made by `adx0` and `adx1` along the axis represented by
+        the first character in `plane`. The vector created by `adx0` and
+        `adx1` will be placed on the chosen plane but not aligned to anything
+        necessarily.
 
         Note:
-            Only works for xy, xz, and yz planes.
+            Only works for xy, xz, and yz planes. Also works for the reverse
+            combinations.
+
+        Args:
+            adx0 (int): Atomic index that will serve as the atom to center
+                        the molecule on.
+            adx1 (int): Atomic index that will create the vector that will be
+                        aligned along the axis given by the first character in
+                        the `plane` parameter.
+            adx2 (int): Atomic index that will create the second vector to define
+                        the molecular plane to align to the cartesian plane.
+            plane (str, optional): String of two characters that will define the
+                                   cartesian plane to align the molecule on.
+            center_to (str, optional): String that will define how the molecule
+                                       is to be centered.
+            frame (int, optional): Frame to use for alignment.
+
+        Returns:
+            aligned (:class:`exatomic.Universe.atom`): Aligned atom frame
         '''
+        if len(plane) != 2:
+            raise ValueError("The 'plane' parameter passed was not understood. " \
+                             +"Expected 2 components, but got {}".format(len(plane)))
+        if plane[0] == plane[1]:
+            raise ValueError("Detected that the plane to align to contains two of the " \
+                             +"same cartesian axes {}".format(plane))
         cols = ['x', 'y', 'z']
         axis = []
         for p in plane:
-            if p == 'x':
-                axis.append([1, 0, 0])
-            elif p == 'y':
-                axis.append([0, 1, 0])
-            elif p == 'z':
-                axis.append([0, 0, 1])
+            if p == 'x': axis.append([1, 0, 0])
+            elif p == 'y': axis.append([0, 1, 0])
+            elif p == 'z': axis.append([0, 0, 1])
             else:
                 test = "Sorry the specified axis value, {}, was not understood. The " \
                        +"only values that are accepted are 'x', 'y', or 'z'."
@@ -296,20 +321,9 @@ class Atom(DataFrame):
         else:
             raise ValueError("Could not determing the sign that the rotation angle should " \
                              +"assume, currently, {}, this should not happen.".format(tmp2))
-        #print(theta, norm0, norm1, np.dot(norm0, norm1), np.linalg.norm(norm0), np.linalg.norm(norm1))
-        #print(v0, v1, np.cross(v0.astype(np.float64), v1.astype(np.float64)))
         # rotate the molecule accordingly
         aligned = Atom(aligned).rotate(theta=theta, axis=axis[0],
                                        degrees=False)
-        v0 = aligned.loc[adx1, cols].values \
-                    - aligned.loc[adx0, cols].values
-        v1 = aligned.loc[adx2, cols].values \
-                    - aligned.loc[adx0, cols].values
-        norm0 = np.cross(v0.astype(np.float64), v1.astype(np.float64))
-        theta = np.arccos(np.dot(norm0, norm1) \
-                    / (np.linalg.norm(norm0)*np.linalg.norm(norm1)))
-        #print(theta)
-        #print(v0, v1, np.cross(v0.astype(np.float64), v1.astype(np.float64)))
         return Atom(aligned)
 
     def to_xyz(self, tag='symbol', header=False, comments='', columns=None,

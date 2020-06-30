@@ -6,6 +6,7 @@ from unittest import TestCase
 
 from exatomic.base import resource
 from exatomic.interfaces import XYZ
+from exatomic.core.atom import Atom
 
 class TestAtom(TestCase):
     def setUp(self):
