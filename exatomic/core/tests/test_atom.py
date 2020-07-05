@@ -89,6 +89,24 @@ class TestAtom(TestCase):
         aligned = self.h2.atom.align_to_axis(adx0=0, adx1=1, axis=[0, 0, 1], center_to='NuclChrg')
         self.assertTrue(np.allclose(aligned[self.cols].values, align_nc))
 
+    def test_align_to_plane(self):
+        atom_data = pd.DataFrame.from_dict({'symbol': ['C', 'He', 'O'],
+                                            'x': [0.0, 0.2, 2.5], 'y': [0.0, 0.0, 0.2],
+                                            'z': [0.0, 2.5, 0.0], 'frame': [0, 0, 0]})
+        atom = Atom(atom_data)
+        cols = ['x', 'y', 'z']
+        # align to xy plane
+        expected = [[0.0000000, 0.0000000, 0.0000000],
+                    [2.5079872, 0.0000000, 0.0000000],
+                    [0.1993631, 2.5000509, 0.0000000]]
+        aligned = atom.align_to_plane(0, 1, 2, 'xy')
+        self.assertTrue(np.allclose(expected, atom[cols].values, atol=1e-5))
+        # align to yx plane
+        expected = [[0.0000000 0.0000000 0.0000000],
+                    [0.0000000 2.5079872 0.0000000],
+                    [2.5000509 0.1993631 0.0000000]]
+        aligned = atom.align_to_plane(0, 1, 2, 'yx')
+        self.assertTrue(np.allclose(expected, atom[cols].values, atol=1e-5))
 
 #"""
 #Tests for the Atom DataFrame
