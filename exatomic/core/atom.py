@@ -267,7 +267,51 @@ class Atom(DataFrame):
             frame (int, optional): Frame to use for alignment.
 
         Returns:
-            aligned (:class:`exatomic.Universe.atom`): Aligned atom frame
+            aligned (:class:`exatomic.Universe.atom`): Atom data frame aligned
+                                                       to the specified plane.
+
+        Examples:
+            First, we get the coordinates for water in the resource files,
+
+            >>> from exatomic.base import resource
+            >>> from exatomic.interface.xyz import XYZ
+            >>> xyz = XYZ(resource('H2O.xyz'))
+            >>> print(xyz.atom.to_string())
+                 symbol         x        y        z frame
+            atom
+            0         O -10.07215  1.10190 -0.03604     0
+            1         H  -8.20260  1.04919  0.02545     0
+            2         H -10.61898 -0.06287  1.32268     0
+
+            Now let's align the molecule along the xy-plane,
+
+            >>> print(xyz.atom.align_to_plane(adx0=0, adx1=1, adx2=2,
+            ...                               plane='xy').to_string())
+                 symbol        x       y        z frame
+            atom
+            0         O  0.00000 0.00000  0.00000     0
+            1         H  1.87130 0.00000 -0.00000     0
+            2         H -0.46886 1.81162 -0.00000     0
+
+            What we see here is that the atom index 0 now sits at the origin
+            of the coordinate axes. We can also see that atom index 1 is now
+            on the x-axis and atom index 2 sits somewhere on the xy-plane.
+
+            Now let's try to align the molecule on the xy-plane, however, this
+            time we will align atom index 1 along the y-axis instead of the
+            x-axis. All that needs to be changed from the input above is to
+            switch the order of the `plane` parameter from `'xy'` to `'yx'`,
+
+            >>> print(xyz.atom.align_to_plane(adx0=0, adx1=1, adx2=2,
+            ...                               plane='yx').to_string())
+                 symbol        x        y        z frame
+            atom
+            0         O  0.00000  0.00000  0.00000     0
+            1         H -0.00000  1.87130  0.00000     0
+            2         H  1.81162 -0.46886 -0.00000     0
+
+            And it's that easy! Similarly, this can be done for aligning to
+            the xz-/yz-plane and their respective reverse configurations.
         '''
         if len(plane) != 2:
             raise ValueError("The 'plane' parameter passed was not understood. " \
